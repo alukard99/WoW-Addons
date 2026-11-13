@@ -7,6 +7,7 @@
 -- El texto que se envía sale de una plantilla por canal (pestaña Canales): cada línea de la
 -- plantilla es un mensaje de chat y los {marcadores} se sustituyen por los datos de la receta.
 local NOMBRE = ...
+local T = select(2, ...).T -- traducción (Locale.lua)
 
 local GetItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
 local EnviarChat = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
@@ -14,28 +15,28 @@ local EnviarChat = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessag
 local ESPERA_RESPUESTA = 5 -- segundos sin respuesta antes de reintentar un material
 local MAX_MENSAJE = 255 -- longitud máxima de un mensaje de chat
 
-local PLANTILLA_DEFECTO = "--------------------\n{receta}\n{materiales}\nPrecio total: {total}"
+local PLANTILLA_DEFECTO = T"--------------------\n{receta}\n{materiales}\nPrecio total: {total}"
 
 local AYUDA = table.concat({
-  "Cada línea es un mensaje de chat. Marcadores:",
-  "|cffffd100{receta}|r enlace de la receta    |cffffd100{nombre}|r nombre sin enlace",
-  "|cffffd100{objeto}|r enlace del objeto que se fabrica",
-  "|cffffd100{materiales}|r todos seguidos: [material] x2, [material] x1",
-  "|cffffd100{materiales_precio}|r igual, con el precio de cada uno",
-  "|cffffd100{total_material}|r precio de los materiales    |cffffd100{tarifa}|r tarifa de encantador",
-  "|cffffd100{total}|r materiales + tarifa",
-  "Una línea con alguno de estos se repite por cada material:",
-  "|cffffd100{material}|r enlace   |cffffd100{cantidad}|r   |cffffd100{precio}|r   |cffffd100{unidad}|r precio por unidad",
+  T"Cada línea es un mensaje de chat. Marcadores:",
+  T"|cffffd100{receta}|r enlace de la receta    |cffffd100{nombre}|r nombre sin enlace",
+  T"|cffffd100{objeto}|r enlace del objeto que se fabrica",
+  T"|cffffd100{materiales}|r todos seguidos: [material] x2, [material] x1",
+  T"|cffffd100{materiales_precio}|r igual, con el precio de cada uno",
+  T"|cffffd100{total_material}|r precio de los materiales    |cffffd100{tarifa}|r tarifa de encantador",
+  T"|cffffd100{total}|r materiales + tarifa",
+  T"Una línea con alguno de estos se repite por cada material:",
+  T"|cffffd100{material}|r enlace   |cffffd100{cantidad}|r   |cffffd100{precio}|r   |cffffd100{unidad}|r precio por unidad",
 }, "\n")
 
 local CANALES = {
-  { tipo = "SAY", nombre = "Decir" },
-  { tipo = "PARTY", nombre = "Grupo" },
-  { tipo = "RAID", nombre = "Banda" },
-  { tipo = "GUILD", nombre = "Hermandad" },
-  { tipo = "WHISPER", nombre = "Susurro", destino = "Nombre del jugador" },
-  { tipo = "CHANNEL", nombre = "Canal nº", destino = "Número del canal (p. ej. 2 = Comercio)" },
-  { tipo = "YO", nombre = "Solo yo" },
+  { tipo = "SAY", nombre = T"Decir" },
+  { tipo = "PARTY", nombre = T"Grupo" },
+  { tipo = "RAID", nombre = T"Banda" },
+  { tipo = "GUILD", nombre = T"Hermandad" },
+  { tipo = "WHISPER", nombre = T"Susurro", destino = T"Nombre del jugador" },
+  { tipo = "CHANNEL", nombre = T"Canal nº", destino = T"Número del canal (p. ej. 2 = Comercio)" },
+  { tipo = "YO", nombre = T"Solo yo" },
 }
 
 local db
@@ -53,7 +54,7 @@ local PAUSA_ENVIO = 1 -- segundos entre un mensaje y el siguiente
 local refrescar
 
 local function msg(texto)
-  print("|cff33ccffRecetaSubasta:|r " .. texto)
+  print(T"|cff33ccffRecetaSubasta:|r " .. texto)
 end
 
 -- ------------------------------------------------------------------ utilidades
@@ -103,7 +104,7 @@ end
 
 local function nombreReceta(id)
   local info = C_TradeSkillUI.GetRecipeInfo(id)
-  return info and info.name or ("receta " .. id)
+  return info and info.name or (T"receta " .. id)
 end
 
 local function enlaceReceta(id)
@@ -116,7 +117,7 @@ local function enlaceObjeto(itemID)
   local nombre, enlace = GetItemInfo(itemID)
   if enlace then return enlace end
   if C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
-  return "[" .. (nombre or ("objeto " .. itemID)) .. "]"
+  return "[" .. (nombre or (T"objeto " .. itemID)) .. "]"
 end
 
 -- ------------------------------------------------------------------ plantillas
@@ -131,7 +132,14 @@ local function plantilla(tipo)
   return db.plantillas[tipo] or PLANTILLA_DEFECTO
 end
 
-local MARCADORES_MATERIAL = { "{material}", "{cantidad}", "{precio}", "{unidad}" }
+local MARCADORES_MATERIAL = { "{material}", "{cantidad}", "{precio}", "{unidad}", "{quantity}", "{price}", "{unit}" }
+
+-- Nombres en inglés de los marcadores (la ayuda en inglés usa estos).
+local ALIAS = {
+  recipe = "receta", name = "nombre", item = "objeto", materials = "materiales",
+  materials_price = "materiales_precio", materials_total = "total_material", fee = "tarifa",
+  quantity = "cantidad", price = "precio", unit = "unidad",
+}
 
 local function esPorMaterial(linea)
   local l = linea:lower()
@@ -145,6 +153,7 @@ end
 local function sustituir(linea, valores, extra)
   return (linea:gsub("{([%w_]+)}", function(clave)
     clave = clave:lower()
+    clave = ALIAS[clave] or clave
     return (extra and extra[clave]) or valores[clave]
   end))
 end
@@ -182,18 +191,18 @@ local function construirLineas(id, tipo)
       sinPrecio = sinPrecio + 1
     end
     juntos[i] = enlace .. " x" .. m.n
-    juntosPrecio[i] = juntos[i] .. " (" .. (p and dinero(p * m.n) or "sin precio") .. ")"
+    juntosPrecio[i] = juntos[i] .. " (" .. (p and dinero(p * m.n) or T"sin precio") .. ")"
     porMaterial[i] = {
       material = enlace,
       cantidad = tostring(m.n),
-      precio = p and dinero(p * m.n) or "sin precio",
-      unidad = p and dinero(p) or "sin precio",
+      precio = p and dinero(p * m.n) or T"sin precio",
+      unidad = p and dinero(p) or T"sin precio",
     }
   end
   local tarifa = db.tarifa or 0
   local textoTotal, textoConTarifa = dinero(total), dinero(total + tarifa)
   if sinPrecio > 0 then
-    local aviso = " (sin contar " .. sinPrecio .. " sin precio en subasta)"
+    local aviso = T" (sin contar " .. sinPrecio .. T" sin precio en subasta)"
     textoTotal, textoConTarifa = textoTotal .. aviso, textoConTarifa .. aviso
   end
   local valores = {
@@ -254,7 +263,7 @@ local function siguiente(precioVisto)
   e.esperando, e.reintento = false, false
   if e.i > #e.cola then
     escaneo = nil
-    estado("Precios actualizados. Elige el canal y pulsa Enviar.")
+    estado(T"Precios actualizados. Elige el canal y pulsa Enviar.")
   end
   refrescar()
 end
@@ -269,11 +278,11 @@ end
 local function escanear()
   if not recetaID then return end
   if not subastaAbierta then
-    estado("Abre la casa de subastas para actualizar los precios.")
+    estado(T"Abre la casa de subastas para actualizar los precios.")
     return
   end
   if not (C_AuctionHouse and C_AuctionHouse.SendSearchQuery) then
-    estado("Este cliente no permite buscar en la subasta; se usan los precios guardados.")
+    estado(T"Este cliente no permite buscar en la subasta; se usan los precios guardados.")
     return
   end
   local cola = {}
@@ -300,7 +309,7 @@ motor:SetScript("OnUpdate", function()
   if C_AuctionHouse.IsThrottledMessageSystemReady and not C_AuctionHouse.IsThrottledMessageSystemReady() then
     return
   end
-  estado(string.format("Buscando precios en la subasta... %d / %d", e.i, #e.cola))
+  estado(string.format(T"Buscando precios en la subasta... %d / %d", e.i, #e.cola))
   local orden = {}
   if Enum.AuctionHouseSortOrder and Enum.AuctionHouseSortOrder.Price then
     orden[1] = { sortOrder = Enum.AuctionHouseSortOrder.Price, reverseSort = false }
@@ -318,7 +327,7 @@ end
 
 local function descartarPendiente()
   pendiente = nil
-  textoEnviar("Enviar")
+  textoEnviar(T"Enviar")
 end
 
 -- Lo que se envía de verdad: si todo cabe en un solo mensaje de chat, va junto
@@ -346,12 +355,12 @@ local function avanzar(p)
   end
   if db.temporizadorBloqueado then
     p.auto = false
-    textoEnviar(string.format("Enviar %d/%d", p.i, #p.lineas))
-    estado("Pulsa Enviar otra vez para el siguiente mensaje (el juego solo admite uno por clic).")
+    textoEnviar(string.format(T"Enviar %d/%d", p.i, #p.lineas))
+    estado(T"Pulsa Enviar otra vez para el siguiente mensaje (el juego solo admite uno por clic).")
     return
   end
   p.auto = true
-  estado(string.format("Enviando... %d / %d", p.i - 1, #p.lineas))
+  estado(string.format(T"Enviando... %d / %d", p.i - 1, #p.lineas))
   C_Timer.After(PAUSA_ENVIO, function()
     if pendiente ~= p or not p.auto then return end
     p.intentando = p.i
@@ -366,8 +375,8 @@ local function alBloquearEnvio()
   db.temporizadorBloqueado = true
   p.i, p.intentando, p.auto = p.intentando, nil, false
   pendiente = p
-  textoEnviar(string.format("Enviar %d/%d", p.i, #p.lineas))
-  estado("El juego no deja enviar mensajes con temporizador: pulsa Enviar para cada mensaje restante.")
+  textoEnviar(string.format(T"Enviar %d/%d", p.i, #p.lineas))
+  estado(T"El juego no deja enviar mensajes con temporizador: pulsa Enviar para cada mensaje restante.")
 end
 
 local function siguienteCanal()
@@ -395,7 +404,7 @@ refrescar = function()
   botonPestanaCanales:SetEnabled(pestana ~= "canales")
 
   if pestana == "canales" then
-    botonCanalPlantilla:SetText("Canal: " .. canal.nombre)
+    botonCanalPlantilla:SetText(T"Canal: " .. canal.nombre)
     -- El cuadro solo se rellena al cambiar de canal, para no mover el cursor mientras se escribe.
     if plantillaMostrada ~= canal.tipo then
       plantillaMostrada = canal.tipo
@@ -405,12 +414,12 @@ refrescar = function()
     return
   end
 
-  botonCanal:SetText("Canal: " .. canal.nombre)
+  botonCanal:SetText(T"Canal: " .. canal.nombre)
   campoDestino:SetShown(canal.destino ~= nil)
   if not campoDestino:HasFocus() then campoDestino:SetText(db.destinos[canal.tipo] or "") end
   botonActualizar:SetEnabled(subastaAbierta and not escaneo)
   if not recetaID then
-    textoLineas:SetText("Abre una profesión y selecciona una receta.")
+    textoLineas:SetText(T"Abre una profesión y selecciona una receta.")
   else
     textoLineas:SetText(table.concat(mensajes(recetaID, canal.tipo), "\n"))
   end
@@ -419,7 +428,7 @@ end
 
 local function enviar()
   if not recetaID then
-    estado("No hay ninguna receta seleccionada.")
+    estado(T"No hay ninguna receta seleccionada.")
     return
   end
   local canal = canalActual()
@@ -427,17 +436,17 @@ local function enviar()
   if canal.tipo == "WHISPER" then
     destino = strtrim(db.destinos.WHISPER or "")
     if destino == "" then
-      estado("Escribe el nombre del jugador al que susurrar (pestaña Receta, junto al canal).")
+      estado(T"Escribe el nombre del jugador al que susurrar (pestaña Receta, junto al canal).")
       return
     end
   elseif canal.tipo == "CHANNEL" then
     destino = tonumber(db.destinos.CHANNEL)
     if not destino then
-      estado("Escribe el número del canal, p. ej. 2 para Comercio (pestaña Receta, junto al canal).")
+      estado(T"Escribe el número del canal, p. ej. 2 para Comercio (pestaña Receta, junto al canal).")
       return
     end
   end
-  local hecho = "Enviado a " .. canal.nombre .. (destino and (" " .. destino) or "") .. "."
+  local hecho = T"Enviado a " .. canal.nombre .. (destino and (" " .. destino) or "") .. "."
 
   if canal.tipo == "YO" then
     for _, linea in ipairs(mensajes(recetaID, canal.tipo)) do print(linea) end
@@ -450,7 +459,7 @@ local function enviar()
   if not (p and p.tipo == canal.tipo and p.destino == destino and p.receta == recetaID) then
     local lineas = mensajes(recetaID, canal.tipo)
     if #lineas == 0 then
-      estado("La plantilla de este canal está vacía (pestaña Canales).")
+      estado(T"La plantilla de este canal está vacía (pestaña Canales).")
       return
     end
     p = { lineas = lineas, i = 1, tipo = canal.tipo, destino = destino, receta = recetaID, hecho = hecho }
@@ -507,9 +516,9 @@ local function crearPaginaReceta(f)
   end)
   campoDestino:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
-  botonEnviar = boton(pag, "Enviar", 90, enviar)
+  botonEnviar = boton(pag, T"Enviar", 90, enviar)
   botonEnviar:SetPoint("BOTTOMRIGHT", -12, 12)
-  botonActualizar = boton(pag, "Actualizar precios", 130, function()
+  botonActualizar = boton(pag, T"Actualizar precios", 130, function()
     escanear()
     refrescar()
   end)
@@ -531,7 +540,7 @@ local function crearPaginaCanales(f)
   botonCanalPlantilla = boton(pag, "", 130, siguienteCanal)
   botonCanalPlantilla:SetPoint("TOPLEFT", 12, -4)
 
-  local restaurar = boton(pag, "Restaurar", 90, function()
+  local restaurar = boton(pag, T"Restaurar", 90, function()
     local tipo = canalActual().tipo
     db.plantillas[tipo] = nil
     plantillaMostrada = nil
@@ -540,7 +549,7 @@ local function crearPaginaCanales(f)
   end)
   restaurar:SetPoint("LEFT", botonCanalPlantilla, "RIGHT", 6, 0)
 
-  botonEnviarCanales = boton(pag, "Enviar", 90, function() enviar() end)
+  botonEnviarCanales = boton(pag, T"Enviar", 90, function() enviar() end)
   botonEnviarCanales:SetPoint("TOPRIGHT", -12, -4)
 
   textoEstadoCanales = pag:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
@@ -576,7 +585,7 @@ local function crearPaginaCanales(f)
   -- Tarifa de encantador: valor del marcador {tarifa}, en oro, plata y cobre.
   local etiquetaTarifa = pag:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   etiquetaTarifa:SetPoint("TOPLEFT", fondo, "BOTTOMLEFT", 0, -14)
-  etiquetaTarifa:SetText("Tarifa de encantador |cffffd100{tarifa}|r:")
+  etiquetaTarifa:SetText(T"Tarifa de encantador |cffffd100{tarifa}|r:")
 
   local camposTarifa = {}
   local function guardarTarifa()
@@ -586,9 +595,9 @@ local function crearPaginaCanales(f)
   end
   local tarifa = db.tarifa or 0
   local partes = {
-    { nombre = "oro", ancho = 60, letras = 6, valor = math.floor(tarifa / 10000) },
-    { nombre = "plata", ancho = 32, letras = 2, valor = math.floor(tarifa % 10000 / 100) },
-    { nombre = "cobre", ancho = 32, letras = 2, valor = tarifa % 100 },
+    { nombre = T"oro", ancho = 60, letras = 6, valor = math.floor(tarifa / 10000) },
+    { nombre = T"plata", ancho = 32, letras = 2, valor = math.floor(tarifa % 10000 / 100) },
+    { nombre = T"cobre", ancho = 32, letras = 2, valor = tarifa % 100 },
   }
   local anterior = etiquetaTarifa
   for i, parte in ipairs(partes) do
@@ -637,12 +646,12 @@ local function crearVentana()
 
   local titulo = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   titulo:SetPoint("TOP", 0, -5)
-  titulo:SetText("Receta con precios de subasta")
+  titulo:SetText(T"Receta con precios de subasta")
 
   -- Pestañas: la activa queda desactivada (en gris) para que se vea cuál es.
-  botonPestanaReceta = boton(f, "Receta", 90, function() cambiarPestana("receta") end)
+  botonPestanaReceta = boton(f, T"Receta", 90, function() cambiarPestana("receta") end)
   botonPestanaReceta:SetPoint("TOPLEFT", 12, -30)
-  botonPestanaCanales = boton(f, "Canales", 90, function() cambiarPestana("canales") end)
+  botonPestanaCanales = boton(f, T"Canales", 90, function() cambiarPestana("canales") end)
   botonPestanaCanales:SetPoint("LEFT", botonPestanaReceta, "RIGHT", 4, 0)
 
   crearPaginaReceta(f)
@@ -667,7 +676,7 @@ local function mostrar()
   elseif subastaAbierta then
     escanear()
   else
-    estado("Precios guardados. Abre la casa de subastas para actualizarlos.")
+    estado(T"Precios guardados. Abre la casa de subastas para actualizarlos.")
   end
   refrescar()
 end
@@ -684,7 +693,7 @@ end
 local botonProfesiones
 local function engancharProfesiones()
   if botonProfesiones or not ProfessionsFrame then return end
-  botonProfesiones = boton(ProfessionsFrame, "Linkear con precios", 150, mostrar)
+  botonProfesiones = boton(ProfessionsFrame, T"Linkear con precios", 150, mostrar)
   botonProfesiones:SetPoint("BOTTOMRIGHT", ProfessionsFrame, "TOPRIGHT", -30, 2)
   if EventRegistry then
     EventRegistry:RegisterCallback("ProfessionsRecipeListMixin.Event.OnRecipeSelected", function(_, info)
@@ -696,7 +705,7 @@ local function engancharProfesiones()
         if subastaAbierta then
           escanear()
         else
-          estado("Precios guardados. Abre la casa de subastas para actualizarlos.")
+          estado(T"Precios guardados. Abre la casa de subastas para actualizarlos.")
         end
         refrescar()
       end
@@ -735,7 +744,7 @@ eventos:SetScript("OnEvent", function(_, evento, arg)
     subastaAbierta = false
     if escaneo then
       escaneo = nil
-      estado("Búsqueda cancelada: se ha cerrado la casa de subastas.")
+      estado(T"Búsqueda cancelada: se ha cerrado la casa de subastas.")
     end
     refrescar()
   elseif evento == "COMMODITY_SEARCH_RESULTS_UPDATED" then
@@ -754,7 +763,7 @@ SLASH_RECETASUBASTA2 = "/recetasubasta"
 SlashCmdList.RECETASUBASTA = function()
   if not db then return end
   if not recetaID and not recetaSeleccionada() then
-    msg("Abre una profesión y selecciona una receta.")
+    msg(T"Abre una profesión y selecciona una receta.")
   end
   alternar()
 end

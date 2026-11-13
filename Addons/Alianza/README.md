@@ -1,3 +1,62 @@
+# Guild Alliance Chat — a shared chat for several guilds (WoW Forever)
+
+*(Versión en español más abajo.)*
+
+A password-protected chat channel shared by several guilds.
+**Only the person who runs it needs the addon.** Everyone else joins the channel
+like any other game channel.
+
+## For you (with the addon)
+
+### Install
+
+1. Copy the `Alianza` folder into `Interface\AddOns\` of WoW Forever.
+2. Restart the game and enable **Guild Alliance Chat** in the AddOns list.
+
+### Create the channel
+
+```
+/alianza channel ChannelName Password
+```
+
+Since you join first, you become the **channel owner**: you can change the password and
+kick people. Then send the join line to the leaders of the other guilds:
+
+```
+/alianza info       (shows the line so you can copy it)
+/alianza announce   (sends it to your guild chat)
+```
+
+### Commands
+
+| Command | What it does |
+|---|---|
+| `/a <message>` | Write in the alliance channel |
+| `/alianza <message>` | Same as `/a` |
+| `/alianza channel <name> [password]` | Create or join the channel |
+| `/alianza info` | Show the `/join` line to share with others |
+| `/alianza announce` | Send the `/join` line to your guild chat |
+| `/alianza password <new>` | Change the password (if you are the owner) |
+| `/alianza kick <player>` | Kick someone from the channel |
+| `/alianza who` | See who is in the channel |
+| `/alianza tags` | Show or hide `<Guild>` in front of messages |
+| `/alianza leave` | Leave the channel and clear the settings |
+
+The Spanish commands (`canal`, `anunciar`, `clave`, `expulsar`, `quien`, `etiquetas`, `salir`) also work.
+
+## For everyone else (no addon)
+
+1. Type once: `/join ChannelName Password` (the game remembers it).
+2. To talk, use the channel number shown in chat, for example `[5. ChannelName]` → `/5 hello everyone`.
+
+## Guild tag
+
+The game doesn't say the guild in channel messages. The addon remembers the guild of the players
+it sees (your guild, group or raid, target, mouseover and nearby nameplates) and puts `<Guild>`
+in front of their messages. Only you see this.
+
+---
+
 # Alianza — chat común entre hermandades (WoW Forever)
 
 Un canal de chat con clave que comparten varias hermandades.
@@ -9,7 +68,7 @@ como a cualquier otro canal del juego.
 ### Instalación
 
 1. Copia la carpeta `Alianza` en `Interface\AddOns\` de WoW Forever.
-2. Reinicia el juego y activa **Alianza** en la lista de AddOns.
+2. Reinicia el juego y activa **Guild Alliance Chat** en la lista de AddOns.
    Si sale como incompatible, mira el número con `/dump select(4, GetBuildInfo())`
    y ponlo en `## Interface:` dentro de `Alianza.toc` (ahora `16001`).
 

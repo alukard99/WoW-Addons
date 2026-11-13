@@ -1,20 +1,41 @@
 # WoW-Addons
 
-Addons para World of Warcraft (servidor Forever).
+Addons for World of Warcraft (Forever server). They show English text on any client and Spanish on Spanish clients (esES/esMX).
+
+*(Versión en español más abajo.)*
+
+## Download
+
+- **All at once:** download [`WoW-Addons.rar`](WoW-Addons.rar) and extract it into `World of Warcraft\_forever_\Interface\AddOns`.
+- **One by one:** copy the folder of the addon you want from [`Addons/`](Addons) to that same path.
+
+## Addons
+
+| Addon | Folder | Description | Command |
+|---|---|---|---|
+| Guild Alliance Chat | [Alianza](Addons/Alianza) | Shared chat for several guilds | `/alianza` or `/a` |
+| Guild Contribution Ledger | [GuildLedger](Addons/GuildLedger) | Collects your guild's characters and records what each player contributes | `/gl` |
+| The Last Vigil | [LaUltimaVigilia](Addons/LaUltimaVigilia) | Minigame: survive five minutes in the abbey | `/vigil` |
+| Shape Symphony | [Lados](Addons/Lados) | Incremental game of shapes that play music as they break | `/lados` |
+| Recipe Price Share | [RecetaSubasta](Addons/RecetaSubasta) | Links the selected recipe to chat with its materials, amounts and auction price | `/receta` |
+| AH Price Export | [Subastas](Addons/Subastas) | Scans the auction house and exports the prices as text for an AI to analyze | `/subastas` |
+| Whisper Chats | [Susurros](Addons/Susurros) | Whispers like a messaging app, with recent contacts and separate conversations | `/ws` |
+
+---
 
 ## Descarga
+
+Los addons se muestran en inglés en cualquier cliente y en español si el juego está en español (esES/esMX).
 
 - **Todos a la vez:** descarga [`WoW-Addons.rar`](WoW-Addons.rar) y extráelo en `World of Warcraft\_forever_\Interface\AddOns`.
 - **Uno a uno:** copia la carpeta del addon que quieras desde [`Addons/`](Addons) a esa misma ruta.
 
-## Addons
-
-| Addon | Descripción | Comando |
-|---|---|---|
-| [Alianza](Addons/Alianza) | Chat común entre varias hermandades | `/alianza` o `/a` |
-| [GuildLedger](Addons/GuildLedger) | Recopila los personajes de tu hermandad y documenta lo que aporta cada jugador | |
-| [LaUltimaVigilia](Addons/LaUltimaVigilia) | Minijuego: resiste cinco minutos en la abadía | `/vigilia` |
-| [Lados](Addons/Lados) | Juego incremental de figuras que suenan al romperse | `/lados` |
-| [RecetaSubasta](Addons/RecetaSubasta) | Linkea al chat la receta seleccionada con sus materiales, cantidades y precio en subasta | `/receta` |
-| [Subastas](Addons/Subastas) | Escanea la casa de subastas y exporta los precios en texto para analizarlos con una IA | `/subastas` |
-| [Susurros](Addons/Susurros) | Mensajes privados estilo WhatsApp, con contactos recientes y conversaciones separadas | `/ws` |
+| Addon | Carpeta | Descripción | Comando |
+|---|---|---|---|
+| Guild Alliance Chat | [Alianza](Addons/Alianza) | Chat común entre varias hermandades | `/alianza` o `/a` |
+| Guild Contribution Ledger | [GuildLedger](Addons/GuildLedger) | Recopila los personajes de tu hermandad y documenta lo que aporta cada jugador | `/gl` |
+| The Last Vigil | [LaUltimaVigilia](Addons/LaUltimaVigilia) | Minijuego: resiste cinco minutos en la abadía | `/vigilia` |
+| Shape Symphony | [Lados](Addons/Lados) | Juego incremental de figuras que suenan al romperse | `/lados` |
+| Recipe Price Share | [RecetaSubasta](Addons/RecetaSubasta) | Linkea al chat la receta seleccionada con sus materiales, cantidades y precio en subasta | `/receta` |
+| AH Price Export | [Subastas](Addons/Subastas) | Escanea la casa de subastas y exporta los precios en texto para analizarlos con una IA | `/subastas` |
+| Whisper Chats | [Susurros](Addons/Susurros) | Mensajes privados estilo WhatsApp, con contactos recientes y conversaciones separadas | `/ws` |

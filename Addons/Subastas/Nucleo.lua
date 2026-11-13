@@ -1,12 +1,13 @@
 -- Base de datos, utilidades y un motor de tareas que reparte el trabajo pesado
 -- entre varios fotogramas para que el juego no se congele.
 local _, S = ...
+local T = S.T -- traducción (Locale.lua)
 
 S.DIA = 86400
 S.GetItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
 
 function S.msg(texto)
-  print("|cff33ccffSubastas:|r " .. texto)
+  print(T"|cff33ccffSubastas:|r " .. texto)
 end
 
 function S.iniciarDB()

@@ -1,8 +1,11 @@
 ## Interface: 16001, 11509
-## Title: Alianza
-## Notes: Chat común entre varias hermandades con /alianza o /a
+## Title: Guild Alliance Chat
+## Notes: Shared chat for several guilds with /alianza or /a
+## Notes-esES: Chat común entre varias hermandades con /alianza o /a
+## Notes-esMX: Chat común entre varias hermandades con /alianza o /a
 ## Author: Alianza
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: AlianzaDB
 
+Locale.lua
 Alianza.lua

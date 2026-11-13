@@ -2,7 +2,8 @@
 -- Los índices de figura empiezan en 0, como en el juego original, para que las fórmulas de equilibrio
 -- sean idénticas. S.polish[0] es el círculo.
 local _, L = ...
-L.VERSION = "1.0.0"
+local T = L.T -- traducción (Locale.lua)
+L.VERSION = "1.1.0"
 
 local pi, sin, cos, floor, ceil, min, max, sqrt, abs = math.pi, math.sin, math.cos, math.floor, math.ceil, math.min, math.max, math.sqrt, math.abs
 local random = math.random
@@ -37,15 +38,15 @@ local function gearVerts(t)
   return v
 end
 local SHAPE_DEFS = {
-  {"Círculo", false}, {"Triángulo", regular(3)}, {"Cuadrado", regular(4)}, {"Pentágono", regular(5)},
-  {"Hexágono", regular(6)}, {"Heptágono", regular(7)}, {"Octágono", regular(8)}, {"Eneágono", regular(9)},
-  {"Decágono", regular(10)}, {"Endecágono", regular(11)}, {"Dodecágono", regular(12)},
-  {"Pentagrama", starVerts(5, 0.45)}, {"Hexagrama", starVerts(6, 0.55)}, {"Heptagrama", starVerts(7, 0.55)},
-  {"Octagrama", starVerts(8, 0.6)}, {"Decagrama", starVerts(10, 0.65)}, {"Dodecagrama", starVerts(12, 0.7)},
-  {"Engranaje VI", gearVerts(6)}, {"Engranaje VIII", gearVerts(8)}, {"Engranaje X", gearVerts(10)}, {"Engranaje XII", gearVerts(12)},
-  {"Hectágono", regular(100)},
+  {T"Círculo", false}, {T"Triángulo", regular(3)}, {T"Cuadrado", regular(4)}, {T"Pentágono", regular(5)},
+  {T"Hexágono", regular(6)}, {T"Heptágono", regular(7)}, {T"Octágono", regular(8)}, {T"Eneágono", regular(9)},
+  {T"Decágono", regular(10)}, {T"Endecágono", regular(11)}, {T"Dodecágono", regular(12)},
+  {T"Pentagrama", starVerts(5, 0.45)}, {T"Hexagrama", starVerts(6, 0.55)}, {T"Heptagrama", starVerts(7, 0.55)},
+  {T"Octagrama", starVerts(8, 0.6)}, {T"Decagrama", starVerts(10, 0.65)}, {T"Dodecagrama", starVerts(12, 0.7)},
+  {T"Engranaje VI", gearVerts(6)}, {T"Engranaje VIII", gearVerts(8)}, {T"Engranaje X", gearVerts(10)}, {T"Engranaje XII", gearVerts(12)},
+  {T"Hectágono", regular(100)},
 }
-local FAMILIES = {{0, "Polígonos"}, {11, "Estrellas"}, {17, "Engranajes"}, {21, "Final"}}
+local FAMILIES = {{0, T"Polígonos"}, {11, T"Estrellas"}, {17, T"Engranajes"}, {21, "Final"}}
 
 -- hsl(h 70% 55%) → rgb, igual que el CSS del juego
 local function hsl(h, s, l)
@@ -105,14 +106,14 @@ local MODS
 local function plural(n, one, many) return n == 1 and one or many end
 
 local EXTRAS = {
-  {key = "crit", name = "Crítico", desc = "+5% de impactos con daño ×5", max = 10, base = 1e3, growth = 7,
-   req = function() return totalTurrets() >= 3 end, status = function(l) return (l * 5) .. "% críticos" end},
-  {key = "bounce", name = "Rebote", desc = "el pulso salta a otra figura cercana", max = 10, base = 5e3, growth = 12,
-   req = function() return totalTurrets() >= 4 and L.S.unlocked >= 3 end, status = function(l) return l .. " " .. plural(l, "rebote", "rebotes") end},
-  {key = "pierce", name = "Atravesar", desc = "el pulso daña lo que cruza de camino", max = 10, base = 5e4, growth = 15,
-   req = function() return L.S.unlocked >= 5 end, status = function(l) return "atraviesa " .. l end},
-  {key = "blast", name = "Explosión", desc = "al romperse, daña lo cercano de su nivel o menor", max = 10, base = 2.5e5, growth = 15,
-   req = function() return L.S.unlocked >= 6 end, status = function(l) return l .. " " .. plural(l, "lado", "lados") .. " de daño" end},
+  {key = "crit", name = T"Crítico", desc = T"+5% de impactos con daño ×5", max = 10, base = 1e3, growth = 7,
+   req = function() return totalTurrets() >= 3 end, status = function(l) return (l * 5) .. T"% críticos" end},
+  {key = "bounce", name = T"Rebote", desc = T"el pulso salta a otra figura cercana", max = 10, base = 5e3, growth = 12,
+   req = function() return totalTurrets() >= 4 and L.S.unlocked >= 3 end, status = function(l) return l .. " " .. plural(l, T"rebote", T"rebotes") end},
+  {key = "pierce", name = T"Atravesar", desc = T"el pulso daña lo que cruza de camino", max = 10, base = 5e4, growth = 15,
+   req = function() return L.S.unlocked >= 5 end, status = function(l) return T"atraviesa " .. l end},
+  {key = "blast", name = T"Explosión", desc = T"al romperse, daña lo cercano de su nivel o menor", max = 10, base = 2.5e5, growth = 15,
+   req = function() return L.S.unlocked >= 6 end, status = function(l) return l .. " " .. plural(l, T"lado", T"lados") .. T" de daño" end},
 }
 L.EXTRAS = EXTRAS
 local function extraCost(u, lv) return ceil(u.base * u.growth ^ (lv or lvl(u.key))) end
@@ -153,16 +154,16 @@ local function aristasFor(total) return total < BAL.prest and 0 or floor(3 * (to
 local ARISTA_BONUS = 0.02
 local function startCoins(lv) return lv > 0 and 100 * 10 ^ (lv - 1) or 0 end
 local PERKS = {
-  {key = "mult", name = "Resonancia", desc = "×1,5 a todas las ganancias", base = 1, growth = 2.2, max = 50,
+  {key = "mult", name = T"Resonancia", desc = T"×1,5 a todas las ganancias", base = 1, growth = 2.2, max = 50,
    status = function(l) return "×" .. fmt(1.5 ^ l) end},
-  {key = "vet", name = "Torretas veteranas", desc = "+25% de cadencia en todas las torretas", base = 2, growth = 2.5, max = 30,
-   status = function(l) return "×" .. fmt(1.25 ^ l) .. " cadencia" end},
-  {key = "seed", name = "Semilla", desc = "empiezas cada dimensión con monedas", base = 1, growth = 3, max = 20,
-   status = function(l) return fmt(startCoins(l)) .. " al empezar" end},
-  {key = "memory", name = "Memoria geométrica", desc = "empiezas con una figura más desbloqueada", base = 5, growth = 4, max = 9,
-   status = function(l) return (l + 1) .. " figuras al empezar" end},
-  {key = "anomaly", name = "Imán de anomalías", desc = "modificadores más frecuentes y largos", base = 3, growth = 3, max = 8,
-   status = function(l) return string.format("×%.1f frecuencia · ×%.1f duración", 1 / 0.85 ^ l, 1 + 0.2 * l) end},
+  {key = "vet", name = T"Torretas veteranas", desc = T"+25% de cadencia en todas las torretas", base = 2, growth = 2.5, max = 30,
+   status = function(l) return "×" .. fmt(1.25 ^ l) .. T" cadencia" end},
+  {key = "seed", name = T"Semilla", desc = T"empiezas cada dimensión con monedas", base = 1, growth = 3, max = 20,
+   status = function(l) return fmt(startCoins(l)) .. T" al empezar" end},
+  {key = "memory", name = T"Memoria geométrica", desc = T"empiezas con una figura más desbloqueada", base = 5, growth = 4, max = 9,
+   status = function(l) return (l + 1) .. T" figuras al empezar" end},
+  {key = "anomaly", name = T"Imán de anomalías", desc = T"modificadores más frecuentes y largos", base = 3, growth = 3, max = 8,
+   status = function(l) return string.format(T"×%.1f frecuencia · ×%.1f duración", 1 / 0.85 ^ l, 1 + 0.2 * l) end},
 }
 L.PERKS, L.ARISTA_BONUS, L.aristasFor = PERKS, ARISTA_BONUS, aristasFor
 local function perkCost(u) return ceil(u.base * u.growth ^ perk(u.key)) end
@@ -174,33 +175,33 @@ local ACH_BONUS = 0.02
 local function st() return L.S.meta.stats end
 local function activeMods() local c = 0; for _, m in ipairs(MODS) do if modOn(m.key) then c = c + 1 end end; return c end
 local ACHS = {
-  {"first", "Primer lado", "Rompe tu primera figura", function() return st().broken >= 1 end},
-  {"circ100", "Cien círculos", "Rompe 100 círculos", function() return (st().per[0] or 0) >= 100 end},
-  {"b1k", "Mil figuras", "Rompe 1.000 piezas", function() return st().broken >= 1e3 end},
-  {"b10k", "Diez mil", "Rompe 10.000 piezas", function() return st().broken >= 1e4 end},
-  {"b100k", "Cien mil", "Rompe 100.000 piezas", function() return st().broken >= 1e5 end},
-  {"t1", "Primera torreta", "Compra una torreta", function() return totalTurrets() >= 1 end},
-  {"t50", "Batería", "Ten 10 torretas a la vez", function() return totalTurrets() >= 10 end},
-  {"t200", "Arsenal", "Ten 25 torretas a la vez", function() return totalTurrets() >= 25 end},
-  {"polys", "Polígonos completos", "Desbloquea el dodecágono", function() return L.S.unlocked >= 11 end},
-  {"stars", "Estrellado", "Desbloquea el pentagrama", function() return L.S.unlocked >= 12 end},
-  {"gears", "Engranado", "Desbloquea el primer engranaje", function() return L.S.unlocked >= 18 end},
-  {"hecto", "Cien lados", "Desbloquea el hectágono", function() return L.S.unlocked >= N end},
-  {"comp1", "Desmontaje", "Rompe una figura compuesta entera", function() return st().comps >= 1 end},
-  {"comp100", "Arquitecto", "Rompe 100 figuras compuestas", function() return st().comps >= 100 end},
-  {"clicks", "Manos firmes", "Haz 1.000 clics sobre figuras", function() return st().clicks >= 1e3 end},
-  {"punch5", "Puño de acero", "Sube Golpe a nivel 5", function() return L.S.punch >= 5 end},
-  {"pulse1m", "Red de enlaces", "Envía 1.000.000 de pulsos", function() return (st().pulses or 0) >= 1e6 end},
-  {"mod1", "Anomalía", "Activa un modificador", function() return st().mods >= 1 end},
-  {"mod3", "Caos controlado", "Ten 3 modificadores activos a la vez", function() return activeMods() >= 3 end},
-  {"chain5", "Reacción en cadena", "Rompe 5 piezas con una sola explosión", function() return st().chain >= 5 end},
-  {"m1e6", "Millonario", "Gana 1M monedas en total", function() return st().lifetime >= 1e6 end},
-  {"m1e12", "Billonario", "Gana 1T monedas en total", function() return st().lifetime >= 1e12 end},
-  {"m1e18", "Trillonario", "Gana 1Qi monedas en total", function() return st().lifetime >= 1e18 end},
-  {"boss1", "Cazador", "Derrota a un jefe", function() return st().bosses >= 1 end},
-  {"boss10", "Matagigantes", "Derrota a 10 jefes", function() return st().bosses >= 10 end},
-  {"dim1", "Otra dimensión", "Sube de dimensión por primera vez", function() return L.S.meta.dims >= 1 end},
-  {"dim5", "Viajero", "Sube de dimensión 5 veces", function() return L.S.meta.dims >= 5 end},
+  {"first", T"Primer lado", T"Rompe tu primera figura", function() return st().broken >= 1 end},
+  {"circ100", T"Cien círculos", T"Rompe 100 círculos", function() return (st().per[0] or 0) >= 100 end},
+  {"b1k", T"Mil figuras", T"Rompe 1.000 piezas", function() return st().broken >= 1e3 end},
+  {"b10k", T"Diez mil", T"Rompe 10.000 piezas", function() return st().broken >= 1e4 end},
+  {"b100k", T"Cien mil", T"Rompe 100.000 piezas", function() return st().broken >= 1e5 end},
+  {"t1", T"Primera torreta", T"Compra una torreta", function() return totalTurrets() >= 1 end},
+  {"t50", T"Batería", T"Ten 10 torretas a la vez", function() return totalTurrets() >= 10 end},
+  {"t200", T"Arsenal", T"Ten 25 torretas a la vez", function() return totalTurrets() >= 25 end},
+  {"polys", T"Polígonos completos", T"Desbloquea el dodecágono", function() return L.S.unlocked >= 11 end},
+  {"stars", T"Estrellado", T"Desbloquea el pentagrama", function() return L.S.unlocked >= 12 end},
+  {"gears", T"Engranado", T"Desbloquea el primer engranaje", function() return L.S.unlocked >= 18 end},
+  {"hecto", T"Cien lados", T"Desbloquea el hectágono", function() return L.S.unlocked >= N end},
+  {"comp1", T"Desmontaje", T"Rompe una figura compuesta entera", function() return st().comps >= 1 end},
+  {"comp100", T"Arquitecto", T"Rompe 100 figuras compuestas", function() return st().comps >= 100 end},
+  {"clicks", T"Manos firmes", T"Haz 1.000 clics sobre figuras", function() return st().clicks >= 1e3 end},
+  {"punch5", T"Puño de acero", T"Sube Golpe a nivel 5", function() return L.S.punch >= 5 end},
+  {"pulse1m", T"Red de enlaces", T"Envía 1.000.000 de pulsos", function() return (st().pulses or 0) >= 1e6 end},
+  {"mod1", T"Anomalía", T"Activa un modificador", function() return st().mods >= 1 end},
+  {"mod3", T"Caos controlado", T"Ten 3 modificadores activos a la vez", function() return activeMods() >= 3 end},
+  {"chain5", T"Reacción en cadena", T"Rompe 5 piezas con una sola explosión", function() return st().chain >= 5 end},
+  {"m1e6", T"Millonario", T"Gana 1M monedas en total", function() return st().lifetime >= 1e6 end},
+  {"m1e12", T"Billonario", T"Gana 1T monedas en total", function() return st().lifetime >= 1e12 end},
+  {"m1e18", T"Trillonario", T"Gana 1Qi monedas en total", function() return st().lifetime >= 1e18 end},
+  {"boss1", T"Cazador", T"Derrota a un jefe", function() return st().bosses >= 1 end},
+  {"boss10", T"Matagigantes", T"Derrota a 10 jefes", function() return st().bosses >= 10 end},
+  {"dim1", T"Otra dimensión", T"Sube de dimensión por primera vez", function() return L.S.meta.dims >= 1 end},
+  {"dim5", T"Viajero", T"Sube de dimensión 5 veces", function() return L.S.meta.dims >= 5 end},
 }
 L.ACHS, L.ACH_BONUS = ACHS, ACH_BONUS
 local function achCount() local c = 0; for _, a in ipairs(ACHS) do if L.S.meta.ach[a[1]] then c = c + 1 end end; return c end
@@ -247,13 +248,13 @@ L.inGame, L.menuOpen = false, true
 
 -- ---------- Figuras compuestas ----------
 local DESIGNS = {
-  {name = "Molino", core = 2, mods = {1}},
-  {name = "Estrella", core = 3, mods = {1}},
-  {name = "Flor", core = 4, mods = {0}},
-  {name = "Panal", core = 4, mods = {2, 0}},
-  {name = "Corona", core = 6, mods = {3, 1}},
-  {name = "Mandala", core = 8, mods = {5, 2}},
-  {name = "Rosetón", core = 10, mods = {7, 4, 1}},
+  {name = T"Molino", core = 2, mods = {1}},
+  {name = T"Estrella", core = 3, mods = {1}},
+  {name = T"Flor", core = 4, mods = {0}},
+  {name = T"Panal", core = 4, mods = {2, 0}},
+  {name = T"Corona", core = 6, mods = {3, 1}},
+  {name = T"Mandala", core = 8, mods = {5, 2}},
+  {name = T"Rosetón", core = 10, mods = {7, 4, 1}},
 }
 L.DESIGNS = DESIGNS                                     -- DESIGNS[d + 1] es el diseño d
 local function designTop(d) local D = DESIGNS[d + 1]; local t = D.core; for _, m in ipairs(D.mods) do t = max(t, m) end; return t end
@@ -371,7 +372,7 @@ local BOSS_FIRST = 150
 local function bossGap() return 240 + random() * 120 end
 local bossT = BOSS_FIRST
 L.boss, L.BOSS_TIME, L.BOSS_BONUS = nil, BOSS_TIME, BOSS_BONUS
-local BOSS_NAMES = {"Coloso", "Titán", "Leviatán", "Monolito", "Behemot"}
+local BOSS_NAMES = {T"Coloso", T"Titán", T"Leviatán", T"Monolito", T"Behemot"}
 local function bossHP(e)
   local hp = 0
   for _, p in ipairs(e.parts) do if not p.dead then hp = hp + (SHAPES[p.i].sides - p.hits) * p.mul end end
@@ -415,7 +416,7 @@ local function spawnBoss()
   e.hp0 = bossHP(e)
   ents[#ents + 1] = e; L.boss = e
   call("musicStart", noteOf(top, 0))
-  call("toast", "¡Llega un jefe!", e.name .. " · rompe sus anillos de fuera hacia dentro")
+  call("toast", T"¡Llega un jefe!", e.name .. T" · rompe sus anillos de fuera hacia dentro")
 end
 
 local function updateBoss(dt)
@@ -433,7 +434,7 @@ local function updateBoss(dt)
   call("musicLevel", 3 - top)
   if boss.t > BOSS_TIME then
     boss.leaving, boss.inside, boss.vy, boss.vx = true, false, -160, 0
-    call("toast", "El jefe ha escapado", "Lo que rompiste ya está cobrado. Volverá otro.")
+    call("toast", T"El jefe ha escapado", T"Lo que rompiste ya está cobrado. Volverá otro.")
     call("musicStop", false)
     L.boss = nil; bossT = bossGap()
   end
@@ -443,7 +444,7 @@ local function bossDefeated(e)
   s.bosses = (s.bosses or 0) + 1
   if e == L.boss then L.boss = nil; bossT = bossGap() end
   call("musicStop", true)
-  call("toast", "¡Jefe derrotado!", e.name .. " · paga ×" .. (BOSS_BONUS + 1) .. " lo que valían sus piezas")
+  call("toast", T"¡Jefe derrotado!", e.name .. T" · paga ×" .. (BOSS_BONUS + 1) .. T" lo que valían sus piezas")
 end
 
 -- ---------- Flujo de figuras para las torretas ----------
@@ -516,7 +517,7 @@ local function damage(e, p, dmg, x, y, byPlayer, fromBlast)
   local r, label = reward(i) * p.hits / n * p.mul, ""
   if e.boss then e.paid = e.paid + r end
   if isCore(e, p) and e.boss then
-    r = r + BOSS_BONUS * e.paid; label = " ¡jefe!"
+    r = r + BOSS_BONUS * e.paid; label = T" ¡jefe!"
   elseif isCore(e, p) and #e.parts > 1 then
     local mult = designMult(e.parts)
     local sum = 0
@@ -574,11 +575,11 @@ end
 
 -- ---------- Modificadores temporales ----------
 MODS = {
-  {key = "kill", name = "Instakill", icon = "X", dur = 10, turrets = true, desc = "las torretas rompen la pieza de un disparo"},
-  {key = "money", name = "Dinero ×2", icon = "×2", dur = 20, turrets = false, desc = "todo paga el doble"},
-  {key = "frenzy", name = "Frenesí", icon = "»", dur = 12, turrets = true, desc = "torretas ×3 cadencia"},
-  {key = "rain", name = "Figuras ×3", icon = "×3", dur = 15, turrets = false, desc = "se generan 3 veces más figuras"},
-  {key = "smash", name = "Golpe ×10", icon = "×10", dur = 15, turrets = false, desc = "tus clics rompen 10 veces más"},
+  {key = "kill", name = "Instakill", icon = "X", dur = 10, turrets = true, desc = T"las torretas rompen la pieza de un disparo"},
+  {key = "money", name = T"Dinero ×2", icon = "×2", dur = 20, turrets = false, desc = T"todo paga el doble"},
+  {key = "frenzy", name = T"Frenesí", icon = "»", dur = 12, turrets = true, desc = T"torretas ×3 cadencia"},
+  {key = "rain", name = T"Figuras ×3", icon = "×3", dur = 15, turrets = false, desc = T"se generan 3 veces más figuras"},
+  {key = "smash", name = T"Golpe ×10", icon = "×10", dur = 15, turrets = false, desc = T"tus clics rompen 10 veces más"},
 }
 L.MODS = MODS
 local PU_LIFE = 14

@@ -1,5 +1,6 @@
 -- The simulation uses world pixels, seconds and radians, independently of UI scale.
 local _, V = ...
+local TR = V.T -- traducción (Locale.lua); no se llama T porque Combat.lua usa T para otra cosa
 local G
 local keys = {}
 V.keys = keys
@@ -189,7 +190,7 @@ spawnWave = function(dt)
             spawn(ty, (G.p.x + (math.cos(a) * r)), (G.p.y + (math.sin(a) * r)))
         end
         if (sw == 1) then
-            bark("Se cierran en círculo. Rompe el cerco.")
+            bark(TR"Se cierran en círculo. Rompe el cerco.")
         end
     end
     if ((t >= 120) and (not active(ev.h1))) then
@@ -197,7 +198,7 @@ spawnWave = function(dt)
         local x, y = unpack(ringPos())
         spawn("herald", x, y)
         SFX.boss()
-        bark("Un Heraldo. Aún recuerda cómo se mata.")
+        bark(TR"Un Heraldo. Aún recuerda cómo se mata.")
     end
     if ((t >= 200) and (not active(ev.h2))) then
         ev.h2 = 1
@@ -206,7 +207,7 @@ spawnWave = function(dt)
             spawn("herald", x, y)
         end
         SFX.boss()
-        bark("Vienen dos. La abadía no perdona.")
+        bark(TR"Vienen dos. La abadía no perdona.")
     end
     if ((t >= 240) and (not active(ev.b))) then
         ev.b = 1
@@ -214,11 +215,11 @@ spawnWave = function(dt)
         spawn("abbess", x, y)
         SFX.boss()
         G.shake = 14
-        bark("La Abadesa Hueca abandona su capilla.")
+        bark(TR"La Abadesa Hueca abandona su capilla.")
     end
     if (((t >= 285) and (not active(ev.d))) and (not active(G.endless))) then
         ev.d = 1
-        bark("El cielo clarea. Aguanta.")
+        bark(TR"El cielo clarea. Aguanta.")
     end
     if active(G.endless) then
         local hk = math.floor(((t - RUN) / 45))
@@ -403,7 +404,7 @@ kill = function(e)
         append(G.haz, {x = e.x, y = e.y, r = 72, t = 0.8, t0 = 0.8})
     end
     if active(T.boss) then
-        bark("Hasta lo hueco puede romperse.")
+        bark(TR"Hasta lo hueco puede romperse.")
     end
     if active(S.lsk) then
         heal(S.lsk)
@@ -444,7 +445,7 @@ hurtPlayer = function(d, e)
     end
     if (random() < S.dodge) then
         p.inv = 0.3
-        num(p.x, (p.y - 52), "esquiva", "#8fb6c9")
+        num(p.x, (p.y - 52), TR"esquiva", "#8fb6c9")
         return
     end
     if (active(u.barrera) and (G.shield >= 12)) then
@@ -471,7 +472,7 @@ hurtPlayer = function(d, e)
     end
     if ((p.hp <= (p.maxhp * 0.3)) and (not active(G.ev.low))) then
         G.ev.low = 1
-        bark("La sangre es tinta; no la malgastes.")
+        bark(TR"La sangre es tinta; no la malgastes.")
     end
 end
 
@@ -1331,7 +1332,7 @@ update = function(dt)
             G.flash = 1
             append(G.rings, {x = p.x, y = (p.y - 10), r = 220, l = 0.5, l0 = 0.5, col = "246,236,208"})
             areaHit(p.x, p.y, 220, 60, 500, {np = 1})
-            bark("Todavía no. La vigilia no ha terminado.")
+            bark(TR"Todavía no. La vigilia no ha terminado.")
         else
             p.hp = 0
             updHud()
@@ -1437,7 +1438,7 @@ function V.applyCard(k)
         G.flash=1
         G.rings[#G.rings+1]={x=p.x,y=p.y-10,r=180,l=.5,l0=.5,col="242,193,78"}
         SFX.win()
-        bark("El acero recuerda su nombre: "..EV[weapon].name..".")
+        bark(TR"El acero recuerda su nombre: "..EV[weapon].name..".")
     else
         p.up[k]=(p.up[k] or 0)+1
         recalc()

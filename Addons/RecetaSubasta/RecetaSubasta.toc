@@ -1,10 +1,15 @@
 ## Interface: 16001
-## Title: RecetaSubasta
-## Notes: Linkea al chat la receta seleccionada con sus materiales, la cantidad y el precio de cada uno en la casa de subastas. Escribe /receta.
+## Title: Recipe Price Share
+## Notes: Links the selected recipe to chat with its materials, the amount and the auction house price of each one. Type /receta.
+## Notes-esES: Linkea al chat la receta seleccionada con sus materiales, la cantidad y el precio de cada uno en la casa de subastas. Escribe /receta.
+## Notes-esMX: Linkea al chat la receta seleccionada con sus materiales, la cantidad y el precio de cada uno en la casa de subastas. Escribe /receta.
 ## Author: Alusky
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: RecetaSubastaDB
 ## OptionalDeps: Auctionator
-## Category: Subastas
+## Category: Auction House
+## Category-esES: Subastas
+## Category-esMX: Subastas
 
+Locale.lua
 RecetaSubasta.lua

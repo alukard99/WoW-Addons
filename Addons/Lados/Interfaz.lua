@@ -1,5 +1,6 @@
 -- Lados · ventana, tienda, menú y guardado
 local ADDON, L = ...
+local T = L.T -- traducción (Locale.lua)
 local floor, ceil, min, max = math.floor, math.ceil, math.min, math.max
 local fmt = L.fmt
 local FONT = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"
@@ -262,10 +263,10 @@ local function headerButton(label, w)
 end
 local closeBtn = headerButton("X", 28); closeBtn:SetPoint("RIGHT", -8, 0)
 closeBtn.spec.click = function() F:Hide() end
-local menuBtn = headerButton("menú", 48); menuBtn:SetPoint("RIGHT", closeBtn, "LEFT", -6, 0)
-local shopBtn = headerButton("tienda", 54); shopBtn:SetPoint("RIGHT", menuBtn, "LEFT", -6, 0)
+local menuBtn = headerButton(T"menú", 48); menuBtn:SetPoint("RIGHT", closeBtn, "LEFT", -6, 0)
+local shopBtn = headerButton(T"tienda", 54); shopBtn:SetPoint("RIGHT", menuBtn, "LEFT", -6, 0)
 local muteBtn = headerButton("", 96); muteBtn:SetPoint("RIGHT", shopBtn, "LEFT", -6, 0)
-local function drawMute() muteBtn.t1:SetText(L.OPT.muted and "sonido: no" or "sonido: sí") end
+local function drawMute() muteBtn.t1:SetText(L.OPT.muted and T"sonido: no" or T"sonido: sí") end
 muteBtn.spec.click = function() L.OPT.muted = not L.OPT.muted; drawMute() end
 
 -- Mapa (izquierda) y tienda (derecha)
@@ -351,10 +352,10 @@ grip:SetScript("OnMouseUp", function() F:StopMovingOrSizing(); anchorTopLeft(); 
 grip:SetScript("OnMouseWheel", function(_, d) L.wheelScale(d) end)
 grip:SetScript("OnEnter", function(s)
   GameTooltip:SetOwner(s, "ANCHOR_TOPLEFT")
-  GameTooltip:AddLine("Lados · escala " .. floor(F:GetScale() * 100 + 0.5) .. "%")
-  GameTooltip:AddLine("Arrastra: cambiar el tamaño", 1, 1, 1)
-  GameTooltip:AddLine("Rueda (o Ctrl+rueda en la ventana): escala", 1, 1, 1)
-  GameTooltip:AddLine("Clic derecho: escala 100%", 1, 1, 1)
+  GameTooltip:AddLine(T"Lados · escala " .. floor(F:GetScale() * 100 + 0.5) .. "%")
+  GameTooltip:AddLine(T"Arrastra: cambiar el tamaño", 1, 1, 1)
+  GameTooltip:AddLine(T"Rueda (o Ctrl+rueda en la ventana): escala", 1, 1, 1)
+  GameTooltip:AddLine(T"Clic derecho: escala 100%", 1, 1, 1)
   GameTooltip:Show()
 end)
 grip:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -475,7 +476,7 @@ away.a = text(away, 11, C.muted); away.a:SetPoint("TOP", 0, -12); away.a:SetJust
 away.b = text(away, 20, C.ink); away.b:SetPoint("TOP", away.a, "BOTTOM", 0, -6); away.b:SetJustifyH("CENTER")
 away.c = text(away, 11, C.muted); away.c:SetPoint("TOP", away.b, "BOTTOM", 0, -6); away.c:SetJustifyH("CENTER")
 away.ok = mkButton(away); away.ok:SetSize(120, 24); away.ok:SetPoint("BOTTOM", 0, 10)
-away.ok.t1:ClearAllPoints(); away.ok.t1:SetPoint("CENTER"); away.ok.t1:SetJustifyH("CENTER"); away.ok.t1:SetText("Seguir")
+away.ok.t1:ClearAllPoints(); away.ok.t1:SetPoint("CENTER"); away.ok.t1:SetJustifyH("CENTER"); away.ok.t1:SetText(T"Seguir")
 away.ok.spec = {click = function() away:Hide() end}
 away:Hide()
 
@@ -489,16 +490,16 @@ local function grantAway(sec)
   local aw = max(160, min(280, stage:GetWidth() - 10))
   away:SetWidth(aw); away:ClearAllPoints(); away:SetPoint("CENTER", 0, stage:GetHeight() > 300 and 40 or 0)
   away.a:SetWidth(aw - 16); away.c:SetWidth(aw - 16)
-  away.a:SetText("Mientras no estabas · " .. L.fmtTime(sec) .. (sec >= L.AWAY_MAX and " (máximo)" or ""))
-  away.b:SetText("+" .. fmt(gain) .. " monedas")
-  away.c:SetText("tus torretas siguieron trabajando al " .. floor(L.AWAY_RATE * 100) .. "%")
+  away.a:SetText(T"Mientras no estabas · " .. L.fmtTime(sec) .. (sec >= L.AWAY_MAX and T" (máximo)" or ""))
+  away.b:SetText("+" .. fmt(gain) .. T" monedas")
+  away.c:SetText(T"tus torretas siguieron trabajando al " .. floor(L.AWAY_RATE * 100) .. "%")
   away:SetHeight(max(120, 70 + (away.a:GetStringHeight() or 12) + (away.b:GetStringHeight() or 20) + (away.c:GetStringHeight() or 12)))
   away:Show()
   if refresh then refresh() end
 end
 
 -- ---------- Tienda ----------
-local TABS = {{"turrets", "Torretas"}, {"shapes", "Figuras"}, {"dim", "Dimensión"}}
+local TABS = {{"turrets", T"Torretas"}, {"shapes", T"Figuras"}, {"dim", T"Dimensión"}}
 local tab = "turrets"
 local dots = {}
 local tabBtns = {}
@@ -525,30 +526,30 @@ local function bulkInfo(getB, pre)
     local b = getB()
     local n, c = L.quote(b)
     local p = val(pre) or ""
-    return p .. (L.buyMode ~= 1 and ("×" .. n .. " · ") or "") .. fmt(c) .. " monedas", L.S.coins >= c
+    return p .. (L.buyMode ~= 1 and ("×" .. n .. " · ") or "") .. fmt(c) .. T" monedas", L.S.coins >= c
   end
 end
 local function buy(getB) return function() if L.buyBulk(getB()) then refresh(); save() end end end
 local function bulkBar()
   local function opt(v, label) return {label = label, on = L.buyMode == v, click = function() L.buyMode = v; buildShop() end} end
-  return {kind = "seg", opts = {opt(1, "×1"), opt(10, "×10"), opt(math.huge, "Máx")}}
+  return {kind = "seg", opts = {opt(1, "×1"), opt(10, "×10"), opt(math.huge, T"Máx")}}
 end
 
 local function turretsTab()
   local S, out = L.S, {}
   local B = L.BULK
   if seen("turret") then
-    out[#out + 1] = {kind = "card", title = "Torretas",
-      sub = function() return S.guns .. " " .. (S.guns == 1 and "torreta" or "torretas") .. " · " .. fmt(L.fireRate()) .. " lados/s · se enlazan a la figura más cercana" end,
-      rows = {{{label = "Comprar torreta", info = bulkInfo(B.turret), click = buy(B.turret)}}}}
+    out[#out + 1] = {kind = "card", title = T"Torretas",
+      sub = function() return S.guns .. " " .. (S.guns == 1 and T"torreta" or T"torretas") .. " · " .. fmt(L.fireRate()) .. T" lados/s · se enlazan a la figura más cercana" end,
+      rows = {{{label = T"Comprar torreta", info = bulkInfo(B.turret), click = buy(B.turret)}}}}
   end
   if seen("coord") then
-    out[#out + 1] = {kind = "card", bare = true, rows = {{{label = "Coordinación · torretas +50% cadencia",
-      info = bulkInfo(B.coord, function() return "nivel " .. S.coord .. " · " end), click = buy(B.coord)}}}}
+    out[#out + 1] = {kind = "card", bare = true, rows = {{{label = T"Coordinación · torretas +50% cadencia",
+      info = bulkInfo(B.coord, function() return T"nivel " .. S.coord .. " · " end), click = buy(B.coord)}}}}
   end
   if seen("punch") then
-    out[#out + 1] = {kind = "card", bare = true, rows = {{{label = "Golpe · ×2 lados por clic",
-      info = bulkInfo(B.punch, function() local p = L.punchPower(); return fmt(p) .. " " .. (p == 1 and "lado" or "lados") .. " por clic · " end),
+    out[#out + 1] = {kind = "card", bare = true, rows = {{{label = T"Golpe · ×2 lados por clic",
+      info = bulkInfo(B.punch, function() local p = L.punchPower(); return fmt(p) .. " " .. (p == 1 and T"lado" or T"lados") .. T" por clic · " end),
       click = buy(B.punch)}}}}
   end
   for _, u in ipairs(L.EXTRAS) do
@@ -558,7 +559,7 @@ local function turretsTab()
       out[#out + 1] = {kind = "card", bare = true, rows = {{{label = u.name .. " · " .. u.desc,
         info = function()
           local l = L.lvl(u.key)
-          if l >= u.max then return u.status(l) .. " · máximo", false end
+          if l >= u.max then return u.status(l) .. T" · máximo", false end
           return base()
         end, click = buy(get)}}}}
     end
@@ -569,7 +570,7 @@ end
 
 local function joinList(list)
   if #list == 1 then return list[1] end
-  return table.concat(list, ", ", 1, #list - 1) .. " y " .. list[#list]
+  return table.concat(list, ", ", 1, #list - 1) .. T" y " .. list[#list]
 end
 local function compCard(d, withBuy)
   local D = L.DESIGNS[d + 1]
@@ -581,10 +582,10 @@ local function compCard(d, withBuy)
     names[k] = c .. " " .. L.SHAPES[m].name:lower() .. "s"
   end
   local spec = {kind = "card", icon = {d = d}, title = D.name,
-    sub = L.SHAPES[D.core].name .. " + " .. joinList(names) .. " · +" .. fmt(L.designValue(d)) .. " entera" .. (#D.mods > 1 and (" (×" .. 2 ^ #D.mods .. ")") or "")}
+    sub = L.SHAPES[D.core].name .. " + " .. joinList(names) .. " · +" .. fmt(L.designValue(d)) .. T" entera" .. (#D.mods > 1 and (" (×" .. 2 ^ #D.mods .. ")") or "")}
   if withBuy then
-    spec.rows = {{{label = "Desbloquear compuesta",
-      info = function() local c = L.designCost(L.S.designs); return fmt(c) .. " monedas", L.S.coins >= c end,
+    spec.rows = {{{label = T"Desbloquear compuesta",
+      info = function() local c = L.designCost(L.S.designs); return fmt(c) .. T" monedas", L.S.coins >= c end,
       click = function() if L.buyDesign() then buildShop(); refresh(); save() end end}}}
   end
   return spec
@@ -600,14 +601,14 @@ local function shapesTab()
     local spec = {kind = "card", icon = {i = i}, title = SH.name, sub = function()
       local wsum = 0
       for j = 0, S.unlocked - 1 do wsum = wsum + L.spawnWeight(j) end
-      return SH.sides .. " " .. (SH.sides == 1 and "lado" or "lados") .. " · +" .. fmt(L.reward(i)) .. " por figura · " ..
-        floor(L.spawnWeight(i) / wsum * 100 + 0.5) .. "% de apariciones"
+      return SH.sides .. " " .. (SH.sides == 1 and T"lado" or T"lados") .. " · +" .. fmt(L.reward(i)) .. T" por figura · " ..
+        floor(L.spawnWeight(i) / wsum * 100 + 0.5) .. T"% de apariciones"
     end}
     if seen("polish" .. i) then
       local gp, ga = function() return B.polish(i) end, function() return B.attract(i) end
       spec.rows = {{
-        {label = "Pulir ×2", info = bulkInfo(gp), click = buy(gp)},
-        {label = "Atraer +" .. floor(L.ATTRACT_BONUS * 100) .. "%", info = bulkInfo(ga, function()
+        {label = T"Pulir ×2", info = bulkInfo(gp), click = buy(gp)},
+        {label = T"Atraer +" .. floor(L.ATTRACT_BONUS * 100) .. "%", info = bulkInfo(ga, function()
           local a = S.attract[i]; return a > 0 and ("+" .. floor(a * L.ATTRACT_BONUS * 100) .. "% · ") or "" end), click = buy(ga)},
       }}
     end
@@ -616,20 +617,20 @@ local function shapesTab()
   if S.unlocked < N and seen("unlock" .. S.unlocked) then
     local i = S.unlocked
     local SH = L.SHAPES[i]
-    local fam = L.isFamStart(i) and ("Nueva familia: " .. L.familyOf(i) .. " · ") or ""
+    local fam = L.isFamStart(i) and (T"Nueva familia: " .. L.familyOf(i) .. " · ") or ""
     out[#out + 1] = {kind = "card", icon = {i = i}, title = SH.name,
-      sub = fam .. SH.sides .. " lados · +" .. fmt(SH.sides * L.sideValue(i)) .. " por figura",
-      rows = {{{label = "Desbloquear", info = function() local c = L.unlockCost(L.S.unlocked); return fmt(c) .. " monedas", L.S.coins >= c end,
+      sub = fam .. SH.sides .. T" lados · +" .. fmt(SH.sides * L.sideValue(i)) .. T" por figura",
+      rows = {{{label = T"Desbloquear", info = function() local c = L.unlockCost(L.S.unlocked); return fmt(c) .. T" monedas", L.S.coins >= c end,
         click = function() if L.buyUnlock() then buildShop(); refresh(); save() end end}}}}
   end
   if S.unlocked == N then
-    out[#out + 1] = {kind = "text", text = "Has desbloqueado todas las figuras. Del círculo de 1 lado al hectágono de 100."}
+    out[#out + 1] = {kind = "text", text = T"Has desbloqueado todas las figuras. Del círculo de 1 lado al hectágono de 100."}
   end
   local comps = {}
   for d = 0, S.designs - 1 do comps[#comps + 1] = compCard(d) end
   if S.designs < #L.DESIGNS and seen("design" .. S.designs) then comps[#comps + 1] = compCard(S.designs, true) end
   if #comps > 0 then
-    out[#out + 1] = {kind = "text", text = "Compuestas · rompe los módulos para quitar el escudo del núcleo", gap = 4}
+    out[#out + 1] = {kind = "text", text = T"Compuestas · rompe los módulos para quitar el escudo del núcleo", gap = 4}
     for _, c in ipairs(comps) do out[#out + 1] = c end
   end
   if seen("polish0") then table.insert(out, 1, bulkBar()) end
@@ -640,19 +641,19 @@ local prestigeArm = 0
 local function dimTab()
   local m = L.S.meta
   local out = {}
-  out[#out + 1] = {kind = "card", title = "Dimensión actual: " .. L.dimName(), sub = function()
-    return fmt(m.aristas) .. " aristas · " .. fmt(m.aristasTotal) .. " ganadas · " .. L.achCount() .. " logros · ganancias ×" ..
+  out[#out + 1] = {kind = "card", title = T"Dimensión actual: " .. L.dimName(), sub = function()
+    return fmt(m.aristas) .. T" aristas · " .. fmt(m.aristasTotal) .. T" ganadas · " .. L.achCount() .. T" logros · ganancias ×" ..
       string.format("%.2f", L.incomeMult())
   end}
-  out[#out + 1] = {kind = "card", title = "Subir a " .. (3 + m.dims) .. "D",
-    sub = "Reinicia monedas, torretas, mejoras y figuras. Conservas aristas, mejoras de dimensión y logros. Cada arista ganada da +" ..
-      floor(L.ARISTA_BONUS * 100) .. "% a todo para siempre.",
-    rows = {{{label = "Subir de dimensión", info = function()
+  out[#out + 1] = {kind = "card", title = T"Subir a " .. (3 + m.dims) .. "D",
+    sub = T"Reinicia monedas, torretas, mejoras y figuras. Conservas aristas, mejoras de dimensión y logros. Cada arista ganada da +" ..
+      floor(L.ARISTA_BONUS * 100) .. T"% a todo para siempre.",
+    rows = {{{label = T"Subir de dimensión", info = function()
       local gain, S = L.aristasFor(L.S.total), L.S
       if GetTime() > prestigeArm then prestigeArm = 0 end
-      if gain == 0 then return "necesitas ganar " .. fmt(L.BAL.prest) .. " monedas en esta dimensión (" .. fmt(S.total) .. ")", false end
-      if prestigeArm > 0 then return "¿seguro? pulsa otra vez · +" .. fmt(gain) .. " aristas", true, true end
-      return "+" .. fmt(gain) .. " " .. (gain == 1 and "arista" or "aristas") .. " · siguiente con " ..
+      if gain == 0 then return T"necesitas ganar " .. fmt(L.BAL.prest) .. T" monedas en esta dimensión (" .. fmt(S.total) .. ")", false end
+      if prestigeArm > 0 then return T"¿seguro? pulsa otra vez · +" .. fmt(gain) .. T" aristas", true, true end
+      return "+" .. fmt(gain) .. " " .. (gain == 1 and T"arista" or T"aristas") .. T" · siguiente con " ..
         fmt(L.BAL.prest * ((gain + 1) / 3) ^ (1 / L.BAL.arista)), true
     end, click = function()
       if L.aristasFor(L.S.total) == 0 then return end
@@ -664,13 +665,13 @@ local function dimTab()
         save(); buildShop()
       end
     end}}}}
-  out[#out + 1] = {kind = "text", text = "Mejoras de dimensión · se pagan con aristas", gap = 4}
+  out[#out + 1] = {kind = "text", text = T"Mejoras de dimensión · se pagan con aristas", gap = 4}
   for _, u in ipairs(L.PERKS) do
     out[#out + 1] = {kind = "card", bare = true, rows = {{{label = u.name .. " · " .. u.desc, info = function()
       local l = L.perk(u.key)
-      if l >= u.max then return u.status(l) .. " · máximo", false end
+      if l >= u.max then return u.status(l) .. T" · máximo", false end
       local c = L.perkCost(u)
-      return (l > 0 and (u.status(l) .. " · ") or "") .. fmt(c) .. (c == 1 and " arista" or " aristas"), m.aristas >= c
+      return (l > 0 and (u.status(l) .. " · ") or "") .. fmt(c) .. (c == 1 and T" arista" or T" aristas"), m.aristas >= c
     end, click = function() if L.buyPerk(u) then refresh(); save() end end}}}}
   end
   return out
@@ -716,7 +717,7 @@ buildShop = function()
   shopList.sf:SetPoint("TOPLEFT", shop, "TOPLEFT", 14, showTabs and -42 or -14)
   shopList.sf:SetPoint("BOTTOMRIGHT", shop, "BOTTOMRIGHT", -6, 14)
   local specs = contents[tab]
-  if #specs == 0 then specs = {{kind = "text", text = "Haz clic en las figuras para romper sus lados. Tu torreta del centro dispara hacia donde pulses."}} end
+  if #specs == 0 then specs = {{kind = "text", text = T"Haz clic en las figuras para romper sus lados. Tu torreta del centro dispara hacia donde pulses."}} end
   setList(shopList, specs, true)
 end
 L.buildShop = buildShop
@@ -744,7 +745,7 @@ end
 
 local function updateHeader()
   local S = L.S
-  if not L.inGame then coinsFS:SetText("Lados"); cpsFS:SetText(""); dimFS:SetText("")
+  if not L.inGame then coinsFS:SetText(T"Lados"); cpsFS:SetText(""); dimFS:SetText("")
   else
     coinsFS:SetText(fmt(S.coins))
     local rate = L.cps()
@@ -772,8 +773,8 @@ local menu = CreateFrame("Frame", nil, F)
 menu:SetPoint("TOPLEFT", 1, -41); menu:SetPoint("BOTTOMRIGHT", -1, 1)
 menu:SetFrameLevel(F:GetFrameLevel() + 30); menu:EnableMouse(true)
 local mbg = menu:CreateTexture(nil, "BACKGROUND"); mbg:SetAllPoints(); mbg:SetColorTexture(C.bg[1], C.bg[2], C.bg[3], 0.82)
-local mtitle = text(menu, 44, C.ink); mtitle:SetPoint("TOP", 0, -24); mtitle:SetJustifyH("CENTER"); mtitle:SetText("Lados")
-local mtag = text(menu, 12, C.muted); mtag:SetPoint("TOP", mtitle, "BOTTOM", 0, -6); mtag:SetJustifyH("CENTER"); mtag:SetText("rompe figuras · compón música")
+local mtitle = text(menu, 44, C.ink); mtitle:SetPoint("TOP", 0, -24); mtitle:SetJustifyH("CENTER"); mtitle:SetText(T"Lados")
+local mtag = text(menu, 12, C.muted); mtag:SetPoint("TOP", mtitle, "BOTTOM", 0, -6); mtag:SetJustifyH("CENTER"); mtag:SetText(T"rompe figuras · compón música")
 local marks = {}
 for k = 0, 4 do
   local f = CreateFrame("Frame", nil, menu); f:SetSize(24, 24)
@@ -802,7 +803,7 @@ end
 local function summary(d)
   local s = d.S
   local dim = (s.meta and s.meta.dims or 0) > 0 and ((2 + s.meta.dims) .. "D · ") or ""
-  return dim .. fmt(max(s.total or 0, s.coins or 0)) .. " monedas · " .. s.unlocked .. " " .. (s.unlocked == 1 and "figura" or "figuras") ..
+  return dim .. fmt(max(s.total or 0, s.coins or 0)) .. T" monedas · " .. s.unlocked .. " " .. (s.unlocked == 1 and T"figura" or T"figuras") ..
     " · " .. date("%d/%m %H:%M", d.at)
 end
 
@@ -841,7 +842,7 @@ local function armed(key)
   return false
 end
 
-local CHANNELS = {{"SFX", "Efectos"}, {"Music", "Música"}, {"Ambience", "Ambiente"}, {"Master", "General"}}
+local CHANNELS = {{"SFX", T"Efectos"}, {"Music", T"Música"}, {"Ambience", T"Ambiente"}, {"Master", "General"}}
 local function channelName()
   for _, c in ipairs(CHANNELS) do if c[1] == L.OPT.channel then return c[2] end end
   return L.OPT.channel
@@ -853,27 +854,27 @@ showView = function(v, mode)
   local function add(s) h[#h + 1] = s end
   if v == "main" then
     local last, lk = latestSlot()
-    if L.inGame then add(mbtn("Continuar", "Ranura " .. L.slot .. " · en pausa", closeMenu))
-    elseif last then add(mbtn("Continuar", "Ranura " .. lk .. " · " .. summary(last), function() startGame(lk, last.S, last.at) end)) end
-    add(mbtn("Nueva partida", nil, function() showView("slots", "new") end))
-    add(mbtn("Cargar partida", nil, function() showView("slots", "load") end, last ~= nil))
+    if L.inGame then add(mbtn(T"Continuar", T"Ranura " .. L.slot .. T" · en pausa", closeMenu))
+    elseif last then add(mbtn(T"Continuar", T"Ranura " .. lk .. " · " .. summary(last), function() startGame(lk, last.S, last.at) end)) end
+    add(mbtn(T"Nueva partida", nil, function() showView("slots", "new") end))
+    add(mbtn(T"Cargar partida", nil, function() showView("slots", "load") end, last ~= nil))
     if L.inGame then
-      add(mbtn("Logros", L.achCount() .. " de " .. #L.ACHS .. " · +" .. floor(L.achCount() * L.ACH_BONUS * 100 + 0.5) .. "% ganancias",
+      add(mbtn(T"Logros", L.achCount() .. T" de " .. #L.ACHS .. " · +" .. floor(L.achCount() * L.ACH_BONUS * 100 + 0.5) .. T"% ganancias",
         function() showView("achs") end))
     end
-    add(mbtn("Opciones", nil, function() showView("options") end))
-    add(mbtn("Cómo jugar", nil, function() showView("help") end))
-    add({kind = "text", text = "v" .. L.VERSION .. " · /lados abre y cierra esta ventana", center = true})
+    add(mbtn(T"Opciones", nil, function() showView("options") end))
+    add(mbtn(T"Cómo jugar", nil, function() showView("help") end))
+    add({kind = "text", text = "v" .. L.VERSION .. T" · /lados abre y cierra esta ventana", center = true})
   elseif v == "slots" then
-    add(mtitleRow(viewMode == "new" and "Nueva partida · elige ranura" or "Cargar partida"))
+    add(mtitleRow(viewMode == "new" and T"Nueva partida · elige ranura" or T"Cargar partida"))
     for k = 1, 3 do
       local d = readSlot(k)
       local playing = L.inGame and k == L.slot
-      local sub = d and (summary(d) .. (playing and " · en juego" or "")) or "Vacía"
+      local sub = d and (summary(d) .. (playing and T" · en juego" or "")) or T"Vacía"
       local key = "slot" .. k
-      if viewMode == "new" and d and confirm == key then sub = "Ya tiene una partida: pulsa otra vez para sobrescribirla" end
-      if confirm == "del" .. k then sub = "Pulsa otra vez la X para borrarla. No se puede deshacer." end
-      local row = {{label = "Ranura " .. k, info = sub, h = 36, enabled = viewMode == "new" or d ~= nil, click = function()
+      if viewMode == "new" and d and confirm == key then sub = T"Ya tiene una partida: pulsa otra vez para sobrescribirla" end
+      if confirm == "del" .. k then sub = T"Pulsa otra vez la X para borrarla. No se puede deshacer." end
+      local row = {{label = T"Ranura " .. k, info = sub, h = 36, enabled = viewMode == "new" or d ~= nil, click = function()
         if viewMode == "new" then
           if d and not armed(key) then return end
           startGame(k, nil)
@@ -891,56 +892,56 @@ showView = function(v, mode)
     end
     add(backRow())
   elseif v == "options" then
-    add(mtitleRow("Opciones"))
+    add(mtitleRow(T"Opciones"))
     local function toggle(label, key, sub)
-      add(mbtn(label, (L.OPT[key] and "sí" or "no") .. (sub and (" · " .. sub) or ""), function()
+      add(mbtn(label, (L.OPT[key] and T"sí" or "no") .. (sub and (" · " .. sub) or ""), function()
         L.OPT[key] = not L.OPT[key]; drawMute(); showView("options") end))
     end
-    toggle("Silenciar todo", "muted")
-    toggle("Sonido de disparos", "shots")
-    toggle("Base rítmica de fondo", "beat")
-    toggle("Números al romper figuras", "floats")
-    toggle("Cerrar al entrar en combate", "combatHide")
-    add(mbtn("Canal de sonido", channelName() .. " · el volumen se ajusta en las opciones de sonido de WoW", function()
+    toggle(T"Silenciar todo", "muted")
+    toggle(T"Sonido de disparos", "shots")
+    toggle(T"Base rítmica de fondo", "beat")
+    toggle(T"Números al romper figuras", "floats")
+    toggle(T"Cerrar al entrar en combate", "combatHide")
+    add(mbtn(T"Canal de sonido", channelName() .. T" · el volumen se ajusta en las opciones de sonido de WoW", function()
       local idx = 1
       for k, c in ipairs(CHANNELS) do if c[1] == L.OPT.channel then idx = k end end
       L.OPT.channel = CHANNELS[idx % #CHANNELS + 1][1]
       L.tone(L.noteOf(0, 0) + 12, 0, "t")
       showView("options")
     end))
-    add(mbtn("Escala de la ventana", floor(F:GetScale() * 100 + 0.5) .. "% · también con la rueda sobre la esquina o Ctrl+rueda", function()
+    add(mbtn(T"Escala de la ventana", floor(F:GetScale() * 100 + 0.5) .. T"% · también con la rueda sobre la esquina o Ctrl+rueda", function()
       local cur, nextS = F:GetScale(), nil
       for _, s in ipairs(SCALE_STEPS) do if s > cur + 0.01 then nextS = s; break end end
       setScale(nextS or SCALE_STEPS[1])
       showView("options")
     end))
-    add(mbtn("Mostrar la tienda", (shopShown and "sí" or "no") .. " · sin ella la ventana puede ser mucho más pequeña", function()
+    add(mbtn(T"Mostrar la tienda", (shopShown and T"sí" or "no") .. T" · sin ella la ventana puede ser mucho más pequeña", function()
       setShop(not shopShown); showView("options")
     end))
     add(backRow())
   elseif v == "achs" then
-    add(mtitleRow("Logros · " .. L.achCount() .. " de " .. #L.ACHS))
+    add(mtitleRow(T"Logros · " .. L.achCount() .. T" de " .. #L.ACHS))
     for _, a in ipairs(L.ACHS) do
       local on = L.S.meta.ach[a[1]] ~= nil
       add({kind = "card", title = (on and "+ " or "· ") .. a[2], sub = a[3], dim = not on, gap = 6})
     end
     add(backRow())
   elseif v == "help" then
-    add(mtitleRow("Cómo jugar"))
+    add(mtitleRow(T"Cómo jugar"))
     add({kind = "text", color = C.ink, space = 4, text = table.concat({
-      "Las figuras entran al mapa y rebotan. Haz clic donde quieras y tu torreta del centro dispara hacia allí en línea recta: rompe un lado de la primera figura que toque. Al romper todos sus lados ganas monedas.",
-      "Cada lado es una nota: al romper figuras vas componiendo la música. Cada familia suena en su propia escala, y con la primera torreta entra una base de fondo que gana capas a medida que desbloqueas figuras.",
-      "Compra torretas para que disparen por ti: todas comparten las mejoras. Cada torreta se enlaza a una figura distinta y le manda pulsos, justo los que hacen falta para romperla, y luego pasa a otra. En Figuras puedes pulir cada figura (vale el doble) o atraerla (aparece más).",
-      "La mejora Golpe duplica los lados que rompe cada disparo tuyo (como mucho, la pieza entera).",
-      "Más adelante aparecen mejoras de combate: críticos, pulsos que rebotan o atraviesan, y explosiones al romper figuras.",
-      "De vez en cuando aparece una figura deforme que cambia de forma: solo tú puedes pulsarla, y activa un efecto temporal (Instakill, Dinero ×2, Figuras ×3...).",
-      "Desbloquea figuras con más lados: valen mucho más. Hay mejoras que solo aparecen cuando avanzas.",
-      "Las figuras compuestas tienen un núcleo con escudo: rompe antes sus módulos. Enteras pagan el doble.",
-      "Cada pocos minutos llega un jefe: una figura gigante con dos anillos de módulos blindados. Rompe los anillos de fuera hacia dentro antes de que se escape; derrotarlo paga ×" .. (L.BOSS_BONUS + 1) .. ".",
-      "Al ganar " .. fmt(L.BAL.prest) .. " monedas en una partida puedes subir de dimensión: empiezas de cero a cambio de aristas, que dan ganancias permanentes y compran mejoras que no se pierden.",
-      "Mientras la ventana está cerrada tus torretas siguen trabajando al 50% (hasta 12 horas).",
-      "/lados abre y cierra la ventana; Esc la cierra. También puedes asignarle una tecla en Atajos de teclado > AddOns.",
-      "Tamaño: arrastra la esquina de abajo a la derecha. La rueda sobre esa esquina (o Ctrl+rueda en cualquier parte) cambia la escala, y el botón «tienda» la oculta para dejar solo el mapa. /lados mini la deja lo más pequeña posible y /lados centrar la devuelve a su tamaño normal.",
+      T"Las figuras entran al mapa y rebotan. Haz clic donde quieras y tu torreta del centro dispara hacia allí en línea recta: rompe un lado de la primera figura que toque. Al romper todos sus lados ganas monedas.",
+      T"Cada lado es una nota: al romper figuras vas componiendo la música. Cada familia suena en su propia escala, y con la primera torreta entra una base de fondo que gana capas a medida que desbloqueas figuras.",
+      T"Compra torretas para que disparen por ti: todas comparten las mejoras. Cada torreta se enlaza a una figura distinta y le manda pulsos, justo los que hacen falta para romperla, y luego pasa a otra. En Figuras puedes pulir cada figura (vale el doble) o atraerla (aparece más).",
+      T"La mejora Golpe duplica los lados que rompe cada disparo tuyo (como mucho, la pieza entera).",
+      T"Más adelante aparecen mejoras de combate: críticos, pulsos que rebotan o atraviesan, y explosiones al romper figuras.",
+      T"De vez en cuando aparece una figura deforme que cambia de forma: solo tú puedes pulsarla, y activa un efecto temporal (Instakill, Dinero ×2, Figuras ×3...).",
+      T"Desbloquea figuras con más lados: valen mucho más. Hay mejoras que solo aparecen cuando avanzas.",
+      T"Las figuras compuestas tienen un núcleo con escudo: rompe antes sus módulos. Enteras pagan el doble.",
+      T"Cada pocos minutos llega un jefe: una figura gigante con dos anillos de módulos blindados. Rompe los anillos de fuera hacia dentro antes de que se escape; derrotarlo paga ×" .. (L.BOSS_BONUS + 1) .. ".",
+      T"Al ganar " .. fmt(L.BAL.prest) .. T" monedas en una partida puedes subir de dimensión: empiezas de cero a cambio de aristas, que dan ganancias permanentes y compran mejoras que no se pierden.",
+      T"Mientras la ventana está cerrada tus torretas siguen trabajando al 50% (hasta 12 horas).",
+      T"/lados abre y cierra la ventana; Esc la cierra. También puedes asignarle una tecla en Atajos de teclado > AddOns.",
+      T"Tamaño: arrastra la esquina de abajo a la derecha. La rueda sobre esa esquina (o Ctrl+rueda en cualquier parte) cambia la escala, y el botón «tienda» la oculta para dejar solo el mapa. /lados mini la deja lo más pequeña posible y /lados centrar la devuelve a su tamaño normal.",
     }, "\n\n")})
     add(backRow())
   end
@@ -979,7 +980,7 @@ F:SetScript("OnUpdate", function(_, elapsed)
     local got = L.checkAchs()
     if #got > 0 then
       L.achSound()
-      for _, a in ipairs(got) do L.toast("Logro · " .. a[2], a[3] .. " · +" .. floor(L.ACH_BONUS * 100) .. "% ganancias") end
+      for _, a in ipairs(got) do L.toast(T"Logro · " .. a[2], a[3] .. " · +" .. floor(L.ACH_BONUS * 100) .. T"% ganancias") end
     end
   end
   saveAcc = saveAcc + dt
@@ -1008,25 +1009,25 @@ menuBtn.spec.click = function() if L.menuOpen then if L.inGame then closeMenu() 
 function Lados_Toggle()
   if F:IsShown() then F:Hide() else F:Show() end
 end
-BINDING_HEADER_LADOS = "Lados"
-BINDING_NAME_LADOS_TOGGLE = "Abrir o cerrar Lados"
+BINDING_HEADER_LADOS = T"Lados"
+BINDING_NAME_LADOS_TOGGLE = T"Abrir o cerrar Lados"
 SLASH_LADOS1 = "/lados"
 SlashCmdList.LADOS = function(msg)
   msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
-  if msg == "centrar" then
+  if msg == "centrar" or msg == "center" then
     setShop(true, true); setScale(1)
     F:ClearAllPoints(); F:SetPoint("CENTER"); F:SetSize(1000, 640); savePos(); F:Show()
     return
   elseif msg == "mini" then
     setShop(false); setScale(0.7); anchorTopLeft(); F:SetSize(minSize()); savePos(); F:Show()
     return
-  elseif msg == "tienda" then
+  elseif msg == "tienda" or msg == "shop" then
     setShop(not shopShown); F:Show()
     return
-  elseif msg:find("^escala") then
+  elseif msg:find("^escala") or msg:find("^scale") then
     local n = tonumber(msg:match("(%d+)"))
     if n then setScale(n / 100); F:Show()
-    else print("|cff6c9bffLados|r: escribe /lados escala 50 (de " .. floor(SCALE_MIN * 100) .. " a " .. floor(SCALE_MAX * 100) .. ")") end
+    else print(T"|cff6c9bffLados|r: escribe /lados escala 50 (de " .. floor(SCALE_MIN * 100) .. T" a " .. floor(SCALE_MAX * 100) .. ")") end
     return
   end
   Lados_Toggle()
@@ -1055,7 +1056,7 @@ ev:SetScript("OnEvent", function(_, event, name)
   elseif event == "PLAYER_REGEN_DISABLED" then
     if L.OPT.combatHide and F:IsShown() then
       F:Hide()
-      print("|cff6c9bffLados|r: ventana cerrada al entrar en combate. Escribe /lados para volver.")
+      print(T"|cff6c9bffLados|r: ventana cerrada al entrar en combate. Escribe /lados para volver.")
     end
   end
 end)

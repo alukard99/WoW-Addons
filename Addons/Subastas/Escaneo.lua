@@ -3,6 +3,7 @@
 --   "todo":     QueryAuctionItems con getAll (cliente clásico; lista completa, cada 15 min)
 --   "paginas":  QueryAuctionItems página a página (clásico; lento pero siempre funciona)
 local _, S = ...
+local T = S.T -- traducción (Locale.lua)
 
 local POR_PAGINA = NUM_AUCTION_ITEMS_PER_PAGE or 50
 local ESPERA_COMPLETO = 15 * 60
@@ -68,7 +69,7 @@ local function guardar(acc, modo)
   local r = S.reino()
   local dia = S.hoy()
   local distintos = 0
-  estado("Guardando resultados...")
+  estado(T"Guardando resultados...")
   for id, it in pairs(acc.items) do
     distintos = distintos + 1
     local l, rec = it.l, nil
@@ -115,15 +116,15 @@ local function guardar(acc, modo)
   r.ultimoDia = dia
   r.ultimo = { t = time(), leidas = acc.leidas, distintos = distintos, modo = modo }
   S.escaneo = nil
-  local texto = string.format("Escaneo terminado: %d subastas, %d objetos distintos.", acc.leidas, distintos)
+  local texto = string.format(T"Escaneo terminado: %d subastas, %d objetos distintos.", acc.leidas, distintos)
   estado(texto)
-  S.msg(texto .. " Pulsa Exportar en /subastas.")
+  S.msg(texto .. T" Pulsa Exportar en /subastas.")
   if S.alTerminarEscaneo then S.alTerminarEscaneo() end
 end
 
 local function fallo(err)
   S.escaneo = nil
-  estado("Error al escanear: " .. tostring(err))
+  estado(T"Error al escanear: " .. tostring(err))
 end
 
 -- ---------------------------------------------------------------- moderno
@@ -137,7 +138,7 @@ local function leerModerno()
       local nombre, _, cantidad, calidad, _, _, _, _, _, compraYa, _, _, _, vendedor, vendedorCompleto, _, itemID,
         completo = C_AuctionHouse.GetReplicateItemInfo(i)
       anotar(acc, itemID, completo and nombre, calidad, cantidad, compraYa, vendedor or vendedorCompleto)
-      if i % 500 == 0 then estado(string.format("Leyendo subastas... %d / %d", i, n)) end
+      if i % 500 == 0 then estado(string.format(T"Leyendo subastas... %d / %d", i, n)) end
       S.ceder()
     end
     guardar(acc, "moderno")
@@ -160,7 +161,7 @@ local function leerTodo()
       local nombre, _, cantidad, calidad, _, _, _, _, _, compraYa, _, _, _, vendedor, vendedorCompleto, _, itemID =
         GetAuctionItemInfo("list", i)
       anotar(acc, itemID, nombre, calidad, cantidad, compraYa, vendedor or vendedorCompleto)
-      if i % 500 == 0 then estado(string.format("Leyendo subastas... %d / %d", i, n)) end
+      if i % 500 == 0 then estado(string.format(T"Leyendo subastas... %d / %d", i, n)) end
       S.ceder()
     end
     guardar(acc, "todo")
@@ -186,7 +187,7 @@ local function leerPagina()
   end
   e.pagina = e.pagina + 1
   local paginas = math.max(1, math.ceil((total or 0) / POR_PAGINA))
-  estado(string.format("Escaneando páginas... %d / %d", e.pagina, paginas))
+  estado(string.format(T"Escaneando páginas... %d / %d", e.pagina, paginas))
   if e.pagina >= paginas or n == 0 then
     e.leyendo = true
     S.tarea(function() guardar(e.acc, "paginas") end, fallo)
@@ -221,19 +222,19 @@ S.cadaFotograma(function()
     end
   elseif ahora - e.inicio > 90 then
     S.escaneo = nil
-    estado("El servidor no ha enviado la lista. El escaneo completo solo se puede hacer cada 15 minutos; "
-      .. "prueba más tarde o usa /subastas paginas.")
+    estado(T"El servidor no ha enviado la lista. El escaneo completo solo se puede hacer cada 15 minutos; "
+      .. T"prueba más tarde o usa /subastas paginas.")
   end
 end)
 
 -- ---------------------------------------------------------------- arrancar
 function S.escanear(forzarModo)
   if not S.subastaAbierta then
-    estado("Abre la casa de subastas para escanear.")
+    estado(T"Abre la casa de subastas para escanear.")
     return
   end
   if S.escaneo or S.ocupado() then
-    estado("Ya hay un escaneo en marcha.")
+    estado(T"Ya hay un escaneo en marcha.")
     return
   end
 
@@ -248,28 +249,28 @@ function S.escanear(forzarModo)
     end
   end
   if not modo or (modo == "moderno" and not hayModerno()) or (modo ~= "moderno" and not hayClasico()) then
-    estado("Este cliente no tiene una API de subastas conocida.")
+    estado(T"Este cliente no tiene una API de subastas conocida.")
     return
   end
 
   if modo ~= "paginas" and r.ultimoCompleto and time() - r.ultimoCompleto < ESPERA_COMPLETO then
     local faltan = ESPERA_COMPLETO - (time() - r.ultimoCompleto)
-    estado(string.format("El escaneo completo vuelve a estar disponible en %d min. "
-      .. "Mientras, puedes usar /subastas paginas.", math.ceil(faltan / 60)))
+    estado(string.format(T"El escaneo completo vuelve a estar disponible en %d min. "
+      .. T"Mientras, puedes usar /subastas paginas.", math.ceil(faltan / 60)))
     return
   end
 
   S.escaneo = { modo = modo, acc = nuevoAcumulador(), inicio = GetTime(), pagina = 0 }
   if modo == "moderno" then
     r.ultimoCompleto = time()
-    estado("Pidiendo la lista completa al servidor (puede tardar un poco)...")
+    estado(T"Pidiendo la lista completa al servidor (puede tardar un poco)...")
     C_AuctionHouse.ReplicateItems()
   elseif modo == "todo" then
     r.ultimoCompleto = time()
-    estado("Pidiendo la lista completa al servidor (el juego puede congelarse unos segundos)...")
+    estado(T"Pidiendo la lista completa al servidor (el juego puede congelarse unos segundos)...")
     QueryAuctionItems("", nil, nil, 0, false, nil, true, false, nil)
   else
-    estado("Escaneando página a página...")
+    estado(T"Escaneando página a página...")
   end
 end
 
@@ -283,6 +284,6 @@ S.alEvento("AUCTION_HOUSE_CLOSED", function()
   local e = S.escaneo
   if e and not e.leyendo then
     S.escaneo = nil
-    estado("Escaneo cancelado: se ha cerrado la casa de subastas.")
+    estado(T"Escaneo cancelado: se ha cerrado la casa de subastas.")
   end
 end)

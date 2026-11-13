@@ -1,5 +1,6 @@
 -- Guild Ledger: recopila datos de la hermandad y guarda notas/aportes por jugador.
 local ADDON, ns = ...
+local T = ns.T -- traducción (Locale.lua); las categorías se guardan en español y se traducen al mostrarlas
 local GL = {}
 ns.GL = GL
 
@@ -26,7 +27,7 @@ function GL.FormatDate(t, withTime)
 end
 
 function GL.Print(msg)
-    DEFAULT_CHAT_FRAME:AddMessage("|cff88ccffGuild Ledger:|r " .. tostring(msg))
+    DEFAULT_CHAT_FRAME:AddMessage(T"|cff88ccffGuild Ledger:|r " .. tostring(msg))
 end
 
 function GL.ShortName(name)
@@ -146,24 +147,24 @@ function GL.Scan(silent)
                 m = NewMember(name)
                 g.members[name] = m
                 if not firstScan then
-                    GL.AddLog(g, GL.ShortName(name) .. " se ha unido a la hermandad")
-                    AddHistory(m, "Se une a la hermandad")
+                    GL.AddLog(g, GL.ShortName(name) .. T" se ha unido a la hermandad")
+                    AddHistory(m, T"Se une a la hermandad")
                 end
             elseif m.left then
                 m.left = nil
-                GL.AddLog(g, GL.ShortName(name) .. " ha vuelto a la hermandad")
-                AddHistory(m, "Vuelve a la hermandad")
+                GL.AddLog(g, GL.ShortName(name) .. T" ha vuelto a la hermandad")
+                AddHistory(m, T"Vuelve a la hermandad")
             end
 
             if m.level and level and level > m.level then
-                AddHistory(m, "Sube a nivel " .. level)
+                AddHistory(m, T"Sube a nivel " .. level)
                 if level == (GetMaxPlayerLevel and GetMaxPlayerLevel() or 60) then
-                    GL.AddLog(g, GL.ShortName(name) .. " ha llegado a nivel " .. level)
+                    GL.AddLog(g, GL.ShortName(name) .. T" ha llegado a nivel " .. level)
                 end
             end
             if m.rank and rankName and m.rank ~= rankName then
-                AddHistory(m, "Rango: " .. m.rank .. " -> " .. rankName)
-                GL.AddLog(g, GL.ShortName(name) .. ": rango " .. m.rank .. " -> " .. rankName)
+                AddHistory(m, T"Rango: " .. m.rank .. " -> " .. rankName)
+                GL.AddLog(g, GL.ShortName(name) .. T": rango " .. m.rank .. " -> " .. rankName)
             end
 
             m.rank = rankName
@@ -193,8 +194,8 @@ function GL.Scan(silent)
             if not present[name] and not m.left then
                 m.left = now
                 m.online = false
-                AddHistory(m, "Deja la hermandad")
-                GL.AddLog(g, GL.ShortName(name) .. " ha dejado la hermandad")
+                AddHistory(m, T"Deja la hermandad")
+                GL.AddLog(g, GL.ShortName(name) .. T" ha dejado la hermandad")
             end
         end
     end
@@ -217,32 +218,32 @@ end
 
 function GL.ExportText()
     local g = GL.GetGuildDB(false)
-    if not g then return "No hay datos de hermandad." end
+    if not g then return T"No hay datos de hermandad." end
     local names = {}
     for name in pairs(g.members) do names[#names + 1] = name end
     table.sort(names)
 
     local out = {}
-    out[#out + 1] = "== MIEMBROS =="
-    out[#out + 1] = "Nombre;Clase;Nivel;Rango;Estado;Primera vez;Última conexión;Nº aportes;Valor total;Notas"
+    out[#out + 1] = T"== MIEMBROS =="
+    out[#out + 1] = T"Nombre;Clase;Nivel;Rango;Estado;Primera vez;Última conexión;Nº aportes;Valor total;Notas"
     for _, name in ipairs(names) do
         local m = g.members[name]
         local cnt, sum = GL.Totals(m)
         out[#out + 1] = table.concat({
             csv(name), csv(m.class), csv(m.level), csv(m.rank),
-            csv(m.left and "Exmiembro" or "Miembro"),
+            csv(m.left and T"Exmiembro" or T"Miembro"),
             csv(GL.FormatDate(m.firstSeen)), csv(GL.FormatDate(m.lastOnline)),
             csv(cnt), csv(sum), csv(m.notes),
         }, ";")
     end
     out[#out + 1] = ""
-    out[#out + 1] = "== APORTES =="
-    out[#out + 1] = "Fecha;Jugador;Categoría;Valor;Descripción;Anotado por"
+    out[#out + 1] = T"== APORTES =="
+    out[#out + 1] = T"Fecha;Jugador;Categoría;Valor;Descripción;Anotado por"
     for _, name in ipairs(names) do
         local m = g.members[name]
         for _, c in ipairs(m.contributions) do
             out[#out + 1] = table.concat({
-                csv(GL.FormatDate(c.t, true)), csv(name), csv(c.cat),
+                csv(GL.FormatDate(c.t, true)), csv(name), csv(T(c.cat)),
                 csv(c.amount or ""), csv(c.text), csv(c.by),
             }, ";")
         end
@@ -253,12 +254,12 @@ end
 
 function GL.LogText()
     local g = GL.GetGuildDB(false)
-    if not g then return "No hay datos de hermandad." end
+    if not g then return T"No hay datos de hermandad." end
     local out = {}
     for _, e in ipairs(g.log) do
         out[#out + 1] = GL.FormatDate(e.t, true) .. "  " .. e.text
     end
-    if #out == 0 then return "Aún no hay eventos registrados." end
+    if #out == 0 then return T"Aún no hay eventos registrados." end
     return table.concat(out, "\n")
 end
 
@@ -308,21 +309,21 @@ SlashCmdList["GUILDLEDGER"] = function(msg)
     if msg == "scan" or msg == "escanear" then
         GL.RequestRoster()
         C_Timer.After(1.5, function()
-            if GL.Scan() then GL.Print("Roster actualizado.") else GL.Print("No se pudo leer el roster (¿estás en una hermandad?).") end
+            if GL.Scan() then GL.Print(T"Roster actualizado.") else GL.Print(T"No se pudo leer el roster (¿estás en una hermandad?).") end
         end)
     elseif msg == "export" or msg == "exportar" then
-        GL.UI.ShowText("Exportar (Ctrl+A, Ctrl+C)", GL.ExportText())
+        GL.UI.ShowText(T"Exportar (Ctrl+A, Ctrl+C)", GL.ExportText())
     elseif msg == "log" or msg == "historial" then
-        GL.UI.ShowText("Historial de la hermandad", GL.LogText())
+        GL.UI.ShowText(T"Historial de la hermandad", GL.LogText())
     elseif msg == "banco" or msg == "bank" then
         GL.ProcessBankLogs()
-        GL.UI.ShowText("Movimientos del banco", GL.BankText())
+        GL.UI.ShowText(T"Movimientos del banco", GL.BankText())
     elseif msg == "help" or msg == "ayuda" then
-        GL.Print("/gl banco - ver los movimientos del banco registrados")
-        GL.Print("/gl - abrir/cerrar ventana")
-        GL.Print("/gl escanear - releer el roster ahora")
-        GL.Print("/gl exportar - copiar todos los datos como CSV")
-        GL.Print("/gl historial - ver altas, bajas y cambios de rango")
+        GL.Print(T"/gl banco - ver los movimientos del banco registrados")
+        GL.Print(T"/gl - abrir/cerrar ventana")
+        GL.Print(T"/gl escanear - releer el roster ahora")
+        GL.Print(T"/gl exportar - copiar todos los datos como CSV")
+        GL.Print(T"/gl historial - ver altas, bajas y cambios de rango")
     else
         GL.UI.Toggle()
     end

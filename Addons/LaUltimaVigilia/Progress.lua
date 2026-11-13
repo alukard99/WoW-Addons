@@ -1,4 +1,5 @@
 local _, V = ...
+local TR = V.T -- traducción (Locale.lua); no se llama T porque Combat.lua usa T para otra cosa
 local function stats(saved)
     local s=type(saved)=="table" and saved or {}
     for _,k in ipairs({"kills","time","lv","her","abb","wins"}) do s[k]=math.max(0,tonumber(s[k]) or 0) end
@@ -40,9 +41,9 @@ function V.lockText(id)
     local r,s,who=V.requirement(id)
     if not r then return "" end
     local number=r.k=="time" and V.clock or tostring
-    local what={kills="Abate "..r.n.." enemigos en total",time="Sobrevive "..V.clock(r.n).." en una vigilia",
-        lv="Alcanza el nivel "..r.n,her="Derrota a un Heraldo",abb="Derrota a la Abadesa Hueca",wins="Resiste hasta el alba"}
-    return what[r.k]..(who and " jugando con "..who or "")..".  "..number(math.min(s[r.k],r.n)).." / "..number(r.n)
+    local what={kills=TR"Abate "..r.n..TR" enemigos en total",time=TR"Sobrevive "..V.clock(r.n)..TR" en una vigilia",
+        lv=TR"Alcanza el nivel "..r.n,her=TR"Derrota a un Heraldo",abb=TR"Derrota a la Abadesa Hueca",wins=TR"Resiste hasta el alba"}
+    return what[r.k]..(who and TR" jugando con "..who or "")..".  "..number(math.min(s[r.k],r.n)).." / "..number(r.n)
 end
 function V.commit(win)
     local g,db=V.game,V.db

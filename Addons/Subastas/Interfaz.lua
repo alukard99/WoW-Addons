@@ -1,5 +1,6 @@
 -- Ventana principal (/subastas) y botones junto a la casa de subastas.
 local _, S = ...
+local T = S.T -- traducción (Locale.lua)
 
 local ventana, cuadro, textoEstado, botonOrden, campoLineas
 
@@ -38,11 +39,11 @@ exportar = function(esReintento)
   end
   cuadro:SetText(texto)
   cuadro:SetCursorPosition(0)
-  local listo = string.format("%d de %d objetos exportados (%d caracteres). Pulsa «Copiar todo».",
+  local listo = string.format(T"%d de %d objetos exportados (%d caracteres). Pulsa «Copiar todo».",
     incluidos, total, #texto)
   if faltan and faltan > 0 and reintento < REINTENTOS and C_Timer then
     reintento = reintento + 1
-    S.estado(string.format("%s Reintentando (%d/%d)...", aviso, reintento, REINTENTOS))
+    S.estado(string.format(T"%s Reintentando (%d/%d)...", aviso, reintento, REINTENTOS))
     if not reintentoPendiente then
       reintentoPendiente = true
       C_Timer.After(2, function()
@@ -51,7 +52,7 @@ exportar = function(esReintento)
       end)
     end
   elseif faltan and faltan > 0 then
-    S.estado(listo .. string.format(" (%d sin nombre: el servidor no los ha enviado)", faltan))
+    S.estado(listo .. string.format(T" (%d sin nombre: el servidor no los ha enviado)", faltan))
   else
     S.estado(listo)
   end
@@ -62,7 +63,7 @@ local function copiarTodo()
   cuadro:SetFocus()
   cuadro:HighlightText()
   -- WoW no deja a los addons escribir en el portapapeles: el texto queda seleccionado para Ctrl+C.
-  S.estado("Texto seleccionado: pulsa Ctrl+C y pégalo en la IA.")
+  S.estado(T"Texto seleccionado: pulsa Ctrl+C y pégalo en la IA.")
 end
 
 local function crearVentana()
@@ -81,13 +82,13 @@ local function crearVentana()
 
   local titulo = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   titulo:SetPoint("TOP", 0, -5)
-  titulo:SetText("Subastas")
+  titulo:SetText(T"Subastas")
 
-  local escanear = boton(f, "Escanear", 90, function() S.escanear() end)
+  local escanear = boton(f, T"Escanear", 90, function() S.escanear() end)
   escanear:SetPoint("TOPLEFT", 12, -30)
-  local exp = boton(f, "Exportar", 90, exportar)
+  local exp = boton(f, T"Exportar", 90, exportar)
   exp:SetPoint("LEFT", escanear, "RIGHT", 6, 0)
-  local copiar = boton(f, "Copiar todo", 100, copiarTodo)
+  local copiar = boton(f, T"Copiar todo", 100, copiarTodo)
   copiar:SetPoint("LEFT", exp, "RIGHT", 6, 0)
 
   botonOrden = boton(f, "", 150, function(self)
@@ -98,14 +99,14 @@ local function crearVentana()
         break
       end
     end
-    self:SetText("Orden: " .. nombreOrden())
+    self:SetText(T"Orden: " .. nombreOrden())
     exportar()
   end)
   botonOrden:SetPoint("LEFT", copiar, "RIGHT", 6, 0)
 
   local etiqueta = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   etiqueta:SetPoint("LEFT", botonOrden, "RIGHT", 10, 0)
-  etiqueta:SetText("Máx. objetos:")
+  etiqueta:SetText(T"Máx. objetos:")
   campoLineas = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
   campoLineas:SetSize(50, 20)
   campoLineas:SetPoint("LEFT", etiqueta, "RIGHT", 8, 0)
@@ -146,12 +147,12 @@ local function crearVentana()
   scroll:SetScript("OnMouseDown", function() cuadro:SetFocus() end)
 
   f:SetScript("OnShow", function()
-    botonOrden:SetText("Orden: " .. nombreOrden())
+    botonOrden:SetText(T"Orden: " .. nombreOrden())
     campoLineas:SetText(SubastasDB.opciones.lineas)
     if not S.textoEstado then
       local u = S.reino().ultimo
-      S.estado(u and ("Último escaneo: " .. date("%Y-%m-%d %H:%M", u.t) .. ". Pulsa Exportar.")
-        or "Abre la casa de subastas y pulsa Escanear.")
+      S.estado(u and (T"Último escaneo: " .. date("%Y-%m-%d %H:%M", u.t) .. T". Pulsa Exportar.")
+        or T"Abre la casa de subastas y pulsa Escanear.")
     end
     S.refrescarEstado()
   end)
@@ -173,8 +174,8 @@ S.alAbrirSubasta = function()
   if not marco then return end
   local b = S.botonSubasta
   if not b then
-    b = boton(marco, "Escanear", 90, function() S.escanear() end)
-    local abrir = boton(b, "Subastas", 90, Subastas_Toggle)
+    b = boton(marco, T"Escanear", 90, function() S.escanear() end)
+    local abrir = boton(b, T"Subastas", 90, Subastas_Toggle)
     abrir:SetPoint("LEFT", b, "RIGHT", 4, 0)
     b.estado = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     b.estado:SetPoint("RIGHT", b, "LEFT", -8, 0)
@@ -192,16 +193,16 @@ SLASH_SUBASTAS1 = "/subastas"
 SLASH_SUBASTAS2 = "/sub"
 SlashCmdList.SUBASTAS = function(arg)
   arg = strlower(strtrim(arg or ""))
-  if arg == "escanear" then
+  if arg == "escanear" or arg == "scan" then
     S.escanear()
-  elseif arg == "paginas" or arg == "páginas" then
+  elseif arg == "paginas" or arg == "páginas" or arg == "pages" then
     S.escanear("paginas")
-  elseif arg:match("^dias %d+$") then
+  elseif arg:match("^dias %d+$") or arg:match("^days %d+$") then
     SubastasDB.opciones.dias = tonumber(arg:match("%d+"))
-    S.msg("Se guardarán " .. SubastasDB.opciones.dias .. " días de historial.")
-  elseif arg == "borrar" then
+    S.msg(T"Se guardarán " .. SubastasDB.opciones.dias .. T" días de historial.")
+  elseif arg == "borrar" or arg == "clear" then
     SubastasDB.reinos[S.claveReino()] = nil
-    S.msg("Datos de " .. S.claveReino() .. " borrados.")
+    S.msg(T"Datos de " .. S.claveReino() .. T" borrados.")
   else
     Subastas_Toggle()
   end

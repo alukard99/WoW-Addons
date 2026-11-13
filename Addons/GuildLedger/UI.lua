@@ -1,5 +1,6 @@
 -- Guild Ledger: interfaz
 local ADDON, ns = ...
+local T = ns.T -- traducción (Locale.lua)
 local GL = ns.GL
 local UI = {}
 GL.UI = UI
@@ -119,7 +120,7 @@ end
 local function Ago(t)
     if not t then return "-" end
     local d = GL.Now() - t
-    if d < 3600 then return "ahora" end
+    if d < 3600 then return T"ahora" end
     if d < 86400 then return math.floor(d / 3600) .. " h" end
     return math.floor(d / 86400) .. " d"
 end
@@ -183,7 +184,7 @@ function UI.Build()
 
     local title = Text(f, "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 14, -12)
-    title:SetText("Registro de Hermandad")
+    title:SetText(T"Registro de Hermandad")
     UI.title = title
 
     local close = Make("Button", nil, f, "UIPanelCloseButton")
@@ -200,30 +201,30 @@ function UI.Build()
     end)
     local sl = Text(f, "GameFontDisableSmall")
     sl:SetPoint("BOTTOMLEFT", search, "TOPLEFT", -4, 2)
-    sl:SetText("Buscar (nombre, rango, notas)")
+    sl:SetText(T"Buscar (nombre, rango, notas)")
 
-    local cOnline = Check(f, "Solo conectados", function(v) UI.onlyOnline = v; UI.offset = 0; UI.Refresh() end)
+    local cOnline = Check(f, T"Solo conectados", function(v) UI.onlyOnline = v; UI.offset = 0; UI.Refresh() end)
     cOnline:SetPoint("LEFT", search, "RIGHT", 10, 0)
-    local cLeft = Check(f, "Exmiembros", function(v) UI.showLeft = v; UI.offset = 0; UI.Refresh() end)
+    local cLeft = Check(f, T"Exmiembros", function(v) UI.showLeft = v; UI.offset = 0; UI.Refresh() end)
     cLeft:SetPoint("LEFT", cOnline, "RIGHT", 100, 0)
 
-    local bScan = Button(f, "Escanear", 80)
+    local bScan = Button(f, T"Escanear", 80)
     bScan:SetPoint("TOPLEFT", f, "TOPLEFT", LIST_W + 30, -40)
     bScan:SetScript("OnClick", function()
         GL.RequestRoster()
         C_Timer.After(1.5, function() GL.Scan() end)
     end)
-    local bLog = Button(f, "Historial", 80)
+    local bLog = Button(f, T"Historial", 80)
     bLog:SetPoint("LEFT", bScan, "RIGHT", 4, 0)
-    bLog:SetScript("OnClick", function() UI.ShowText("Historial de la hermandad", GL.LogText()) end)
-    local bExp = Button(f, "Exportar", 80)
+    bLog:SetScript("OnClick", function() UI.ShowText(T"Historial de la hermandad", GL.LogText()) end)
+    local bExp = Button(f, T"Exportar", 80)
     bExp:SetPoint("LEFT", bLog, "RIGHT", 4, 0)
-    bExp:SetScript("OnClick", function() UI.ShowText("Exportar (Ctrl+A, Ctrl+C)", GL.ExportText()) end)
-    local bBank = Button(f, "Banco", 70)
+    bExp:SetScript("OnClick", function() UI.ShowText(T"Exportar (Ctrl+A, Ctrl+C)", GL.ExportText()) end)
+    local bBank = Button(f, T"Banco", 70)
     bBank:SetPoint("LEFT", bExp, "RIGHT", 4, 0)
     bBank:SetScript("OnClick", function()
         GL.ProcessBankLogs(true)
-        UI.ShowText("Movimientos del banco", GL.BankText())
+        UI.ShowText(T"Movimientos del banco", GL.BankText())
     end)
 
     -- Lista
@@ -238,11 +239,11 @@ function UI.Build()
     UI.list = list
 
     local cols = {
-        { key = "name",   label = "Nombre",  x = 8,   w = 140 },
-        { key = "level",  label = "Nv",      x = 150, w = 30 },
-        { key = "rank",   label = "Rango",   x = 184, w = 110 },
-        { key = "points", label = "Aportes", x = 298, w = 90 },
-        { key = "seen",   label = "Visto",   x = 392, w = 66 },
+        { key = "name",   label = T"Nombre",  x = 8,   w = 140 },
+        { key = "level",  label = T"Nv",      x = 150, w = 30 },
+        { key = "rank",   label = T"Rango",   x = 184, w = 110 },
+        { key = "points", label = T"Aportes", x = 298, w = 90 },
+        { key = "seen",   label = T"Visto",   x = 392, w = 66 },
     }
     for _, c in ipairs(cols) do
         local h = CreateFrame("Button", nil, list)
@@ -304,7 +305,7 @@ function UI.BuildDetail()
 
     local empty = Text(d, "GameFontDisable", "CENTER")
     empty:SetPoint("CENTER")
-    empty:SetText("Selecciona un jugador de la lista")
+    empty:SetText(T"Selecciona un jugador de la lista")
     UI.empty = empty
 
     local body = CreateFrame("Frame", nil, d)
@@ -326,7 +327,7 @@ function UI.BuildDetail()
 
     local nl = Text(body, "GameFontNormal")
     nl:SetPoint("TOPLEFT", 10, -142)
-    nl:SetText("Notas")
+    nl:SetText(T"Notas")
     local notes = MultiLine(body, W - 16, 60)
     notes:SetPoint("TOPLEFT", nl, "BOTTOMLEFT", -2, -2)
     notes.edit:SetScript("OnTextChanged", function(self, user)
@@ -340,7 +341,7 @@ function UI.BuildDetail()
     -- Nuevo aporte
     local al = Text(body, "GameFontNormal")
     al:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 2, -8)
-    al:SetText("Añadir aporte")
+    al:SetText(T"Añadir aporte")
 
     local cat = Button(body, "", 130)
     cat:SetPoint("TOPLEFT", al, "BOTTOMLEFT", 0, -4)
@@ -349,16 +350,16 @@ function UI.BuildDetail()
         local n = #GL.CATEGORIES
         if btn == "RightButton" then UI.catIndex = (UI.catIndex - 2) % n + 1
         else UI.catIndex = UI.catIndex % n + 1 end
-        self:SetText(GL.CATEGORIES[UI.catIndex])
+        self:SetText(T(GL.CATEGORIES[UI.catIndex]))
     end)
     cat:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
-        GameTooltip:AddLine("Categoría")
-        GameTooltip:AddLine("Clic izq./der. para cambiar", 1, 1, 1)
+        GameTooltip:AddLine(T"Categoría")
+        GameTooltip:AddLine(T"Clic izq./der. para cambiar", 1, 1, 1)
         GameTooltip:Show()
     end)
     cat:SetScript("OnLeave", GameTooltip_Hide)
-    cat:SetText(GL.CATEGORIES[UI.catIndex])
+    cat:SetText(T(GL.CATEGORIES[UI.catIndex]))
 
     local amount = InputBox(body, 60)
     amount:SetPoint("LEFT", cat, "RIGHT", 52, 0)
@@ -366,11 +367,11 @@ function UI.BuildDetail()
     amount.glAcceptLinks = nil
     local aml = Text(body, "GameFontDisableSmall")
     aml:SetPoint("RIGHT", amount, "LEFT", -8, 0)
-    aml:SetText("Valor")
+    aml:SetText(T"Valor")
 
     local desc = InputBox(body, W - 100)
     desc:SetPoint("TOPLEFT", cat, "BOTTOMLEFT", 6, -6)
-    local add = Button(body, "Añadir", 70)
+    local add = Button(body, T"Añadir", 70)
     add:SetPoint("LEFT", desc, "RIGHT", 6, 0)
 
     local function DoAdd()
@@ -379,7 +380,7 @@ function UI.BuildDetail()
         local text = desc:GetText() or ""
         local val = tonumber(amount:GetText())
         if text == "" and not val then
-            GL.Print("Escribe una descripción o un valor.")
+            GL.Print(T"Escribe una descripción o un valor.")
             return
         end
         GL.AddContribution(m, GL.CATEGORIES[UI.catIndex], val, text)
@@ -396,7 +397,7 @@ function UI.BuildDetail()
     -- Lista de aportes
     local cl = Text(body, "GameFontNormal")
     cl:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", -6, -10)
-    cl:SetText("Aportes registrados")
+    cl:SetText(T"Aportes registrados")
     UI.cTitle = cl
 
     local cbox = Panel(body)
@@ -434,9 +435,9 @@ function UI.BuildDetail()
             local c = m and self.index and m.contributions[self.index]
             if not c then return end
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:AddLine(c.cat .. (c.amount and ("  (" .. c.amount .. ")") or ""))
+            GameTooltip:AddLine(T(c.cat) .. (c.amount and ("  (" .. c.amount .. ")") or ""))
             if c.text ~= "" then GameTooltip:AddLine(c.text, 1, 1, 1, true) end
-            GameTooltip:AddLine(GL.FormatDate(c.t, true) .. " - anotado por " .. (c.by or "?"), 0.6, 0.6, 0.6)
+            GameTooltip:AddLine(GL.FormatDate(c.t, true) .. T" - anotado por " .. (c.by or "?"), 0.6, 0.6, 0.6)
             GameTooltip:Show()
         end)
         r:SetScript("OnLeave", GameTooltip_Hide)
@@ -444,15 +445,15 @@ function UI.BuildDetail()
     end
 
     -- Olvidar exmiembro
-    local seeBank = Button(body, "Ver banco", 80)
+    local seeBank = Button(body, T"Ver banco", 80)
     seeBank:SetPoint("TOPRIGHT", -8, -8)
     seeBank:SetScript("OnClick", function()
         if UI.selected then
-            UI.ShowText("Banco - " .. GL.ShortName(UI.selected), GL.BankText(UI.selected))
+            UI.ShowText(T"Banco - " .. GL.ShortName(UI.selected), GL.BankText(UI.selected))
         end
     end)
 
-    local forget = Button(body, "Borrar ficha", 90)
+    local forget = Button(body, T"Borrar ficha", 90)
     forget:SetPoint("RIGHT", seeBank, "LEFT", -4, 0)
     forget:SetScript("OnClick", function()
         if UI.selected then StaticPopup_Show("GUILDLEDGER_FORGET", GL.ShortName(UI.selected)) end
@@ -461,8 +462,8 @@ function UI.BuildDetail()
 end
 
 StaticPopupDialogs["GUILDLEDGER_DELETE_CONTRIB"] = {
-    text = "¿Borrar este aporte?",
-    button1 = YES or "Sí",
+    text = T"¿Borrar este aporte?",
+    button1 = YES or T"Sí",
     button2 = NO or "No",
     OnAccept = function()
         local p = UI.pendingDelete
@@ -474,8 +475,8 @@ StaticPopupDialogs["GUILDLEDGER_DELETE_CONTRIB"] = {
 }
 
 StaticPopupDialogs["GUILDLEDGER_FORGET"] = {
-    text = "¿Borrar toda la ficha de %s (notas y aportes incluidos)?",
-    button1 = YES or "Sí",
+    text = T"¿Borrar toda la ficha de %s (notas y aportes incluidos)?",
+    button1 = YES or T"Sí",
     button2 = NO or "No",
     OnAccept = function()
         local g = GL.GetGuildDB(false)
@@ -500,9 +501,9 @@ function UI.Refresh()
     local list, g = BuildList()
 
     if g then
-        UI.title:SetText("Registro de Hermandad - |cffffffff" .. (g.name or "") .. "|r")
+        UI.title:SetText(T"Registro de Hermandad - |cffffffff" .. (g.name or "") .. "|r")
     else
-        UI.title:SetText("Registro de Hermandad")
+        UI.title:SetText(T"Registro de Hermandad")
     end
 
     local maxOff = math.max(0, #list - ROWS)
@@ -515,13 +516,13 @@ function UI.Refresh()
             r.name:SetText(GL.ShortName(m.name))
             if m.left then r.name:SetTextColor(0.5, 0.5, 0.5) else r.name:SetTextColor(ClassColor(m.classFile)) end
             r.level:SetText(m.level or "")
-            r.rank:SetText(m.left and "|cff888888(exmiembro)|r" or (m.rank or ""))
+            r.rank:SetText(m.left and T"|cff888888(exmiembro)|r" or (m.rank or ""))
             if m._cnt > 0 then
                 r.points:SetText(m._cnt .. (m._sum ~= 0 and (" |cffffd100(" .. m._sum .. ")|r") or ""))
             else
                 r.points:SetText("|cff666666-|r")
             end
-            r.seen:SetText(m.online and "|cff33ff33en línea|r" or Ago(m.lastOnline))
+            r.seen:SetText(m.online and T"|cff33ff33en línea|r" or Ago(m.lastOnline))
             r.dot:SetShown(m.online and true or false)
             r.sel:SetShown(m.name == UI.selected)
             r:Show()
@@ -532,7 +533,7 @@ function UI.Refresh()
     end
 
     if not g then
-        UI.status:SetText("No estás en una hermandad, o el roster aún no ha cargado.")
+        UI.status:SetText(T"No estás en una hermandad, o el roster aún no ha cargado.")
     else
         local total, online, gone = 0, 0, 0
         for _, m in pairs(g.members) do
@@ -541,8 +542,8 @@ function UI.Refresh()
                 if m.online then online = online + 1 end
             end
         end
-        local shown = #list > 0 and string.format("%d-%d de %d", UI.offset + 1, math.min(#list, UI.offset + ROWS), #list) or "0"
-        UI.status:SetText(string.format("Mostrando %s  ·  %d miembros, %d en línea, %d exmiembros  ·  Último escaneo: %s",
+        local shown = #list > 0 and string.format(T"%d-%d de %d", UI.offset + 1, math.min(#list, UI.offset + ROWS), #list) or "0"
+        UI.status:SetText(string.format(T"Mostrando %s  ·  %d miembros, %d en línea, %d exmiembros  ·  Último escaneo: %s",
             shown, total, online, gone, GL.FormatDate(g.scanned, true)))
     end
 
@@ -565,19 +566,19 @@ function UI.RefreshDetail()
 
     local cnt, sum = GL.Totals(m)
     local lines = {
-        string.format("Nivel %s %s  ·  %s", m.level or "?", m.class or "", m.left and ("|cffff6666Dejó la hermandad el " .. GL.FormatDate(m.left) .. "|r") or (m.rank or "")),
-        "Zona: " .. (m.zone or "-") .. "   ·   Última conexión: " .. (m.online and "|cff33ff33en línea|r" or GL.FormatDate(m.lastOnline)),
-        "Registrado desde: " .. GL.FormatDate(m.firstSeen),
-        "Nota pública: |cffcccccc" .. ((m.publicNote and m.publicNote ~= "") and m.publicNote or "-") .. "|r",
+        string.format(T"Nivel %s %s  ·  %s", m.level or "?", m.class or "", m.left and (T"|cffff6666Dejó la hermandad el " .. GL.FormatDate(m.left) .. "|r") or (m.rank or "")),
+        T"Zona: " .. (m.zone or "-") .. T"   ·   Última conexión: " .. (m.online and T"|cff33ff33en línea|r" or GL.FormatDate(m.lastOnline)),
+        T"Registrado desde: " .. GL.FormatDate(m.firstSeen),
+        T"Nota pública: |cffcccccc" .. ((m.publicNote and m.publicNote ~= "") and m.publicNote or "-") .. "|r",
     }
-    if m.officerNote then lines[#lines + 1] = "Nota oficial: |cffcccccc" .. m.officerNote .. "|r" end
+    if m.officerNote then lines[#lines + 1] = T"Nota oficial: |cffcccccc" .. m.officerNote .. "|r" end
     if m.bank then
         local s = m.bank
-        lines[#lines + 1] = string.format("Banco: |cff33ff33+%s|r / |cffff6666-%s|r  ·  objetos |cff33ff33+%d|r / |cffff6666-%d|r",
+        lines[#lines + 1] = string.format(T"Banco: |cff33ff33+%s|r / |cffff6666-%s|r  ·  objetos |cff33ff33+%d|r / |cffff6666-%d|r",
             GL.Money(s.depGold), GL.Money(s.wdGold), s.depItems, s.wdItems)
     end
     if m.history and m.history[1] then
-        lines[#lines + 1] = "|cff888888Último cambio: " .. m.history[1].text .. " (" .. GL.FormatDate(m.history[1].t) .. ")|r"
+        lines[#lines + 1] = T"|cff888888Último cambio: " .. m.history[1].text .. " (" .. GL.FormatDate(m.history[1].t) .. ")|r"
     end
     UI.dInfo:SetText(table.concat(lines, "\n"))
 
@@ -585,7 +586,7 @@ function UI.RefreshDetail()
         UI.dNotes.edit:SetText(m.notes or "")
     end
 
-    UI.cTitle:SetText(string.format("Aportes registrados: %d  ·  Valor total: %d", cnt, sum))
+    UI.cTitle:SetText(string.format(T"Aportes registrados: %d  ·  Valor total: %d", cnt, sum))
     local maxOff = math.max(0, cnt - CROWS)
     if UI.coffset > maxOff then UI.coffset = maxOff end
     for i = 1, CROWS do
@@ -595,7 +596,7 @@ function UI.RefreshDetail()
         if c then
             r.index = idx
             r.date:SetText(GL.FormatDate(c.t))
-            r.cat:SetText(c.cat)
+            r.cat:SetText(T(c.cat))
             r.val:SetText(c.amount or "")
             r.txt:SetText(c.text)
             r:Show()

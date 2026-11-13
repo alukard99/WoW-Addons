@@ -1,0 +1,65 @@
+-- Traducciones. El addon está escrito en español; si el juego no está en español se muestra en inglés.
+local _, ns = ...
+local loc = GetLocale()
+local SPANISH = loc == "esES" or loc == "esMX"
+
+local EN = {
+    ["--------------------\n{receta}\n{materiales}\nPrecio total: {total}"] = "--------------------\n{recipe}\n{materials}\nTotal price: {total}",
+    ["Cada línea es un mensaje de chat. Marcadores:"] = "Each line is one chat message. Placeholders:",
+    ["|cffffd100{receta}|r enlace de la receta    |cffffd100{nombre}|r nombre sin enlace"] = "|cffffd100{recipe}|r recipe link    |cffffd100{name}|r name without link",
+    ["|cffffd100{objeto}|r enlace del objeto que se fabrica"] = "|cffffd100{item}|r link of the crafted item",
+    ["|cffffd100{materiales}|r todos seguidos: [material] x2, [material] x1"] = "|cffffd100{materials}|r all in a row: [material] x2, [material] x1",
+    ["|cffffd100{materiales_precio}|r igual, con el precio de cada uno"] = "|cffffd100{materials_price}|r same, with the price of each one",
+    ["|cffffd100{total_material}|r precio de los materiales    |cffffd100{tarifa}|r tarifa de encantador"] = "|cffffd100{materials_total}|r price of the materials    |cffffd100{fee}|r enchanter fee",
+    ["|cffffd100{total}|r materiales + tarifa"] = "|cffffd100{total}|r materials + fee",
+    ["Una línea con alguno de estos se repite por cada material:"] = "A line with any of these is repeated for each material:",
+    ["|cffffd100{material}|r enlace   |cffffd100{cantidad}|r   |cffffd100{precio}|r   |cffffd100{unidad}|r precio por unidad"] = "|cffffd100{material}|r link   |cffffd100{quantity}|r   |cffffd100{price}|r   |cffffd100{unit}|r price per unit",
+    ["Decir"] = "Say",
+    ["Grupo"] = "Party",
+    ["Banda"] = "Raid",
+    ["Hermandad"] = "Guild",
+    ["Susurro"] = "Whisper",
+    ["Nombre del jugador"] = "Player name",
+    ["Canal nº"] = "Channel #",
+    ["Número del canal (p. ej. 2 = Comercio)"] = "Channel number (e.g. 2 = Trade)",
+    ["Solo yo"] = "Only me",
+    ["|cff33ccffRecetaSubasta:|r "] = "|cff33ccffRecipe Price Share:|r ",
+    ["receta "] = "recipe ",
+    ["objeto "] = "item ",
+    ["sin precio"] = "no price",
+    [" (sin contar "] = " (not counting ",
+    [" sin precio en subasta)"] = " without an auction price)",
+    ["Precios actualizados. Elige el canal y pulsa Enviar."] = "Prices updated. Choose the channel and press Send.",
+    ["Abre la casa de subastas para actualizar los precios."] = "Open the auction house to update the prices.",
+    ["Este cliente no permite buscar en la subasta; se usan los precios guardados."] = "This client can't search the auction house; saved prices are used.",
+    ["Buscando precios en la subasta... %d / %d"] = "Searching auction prices... %d / %d",
+    ["Enviar"] = "Send",
+    ["Enviar %d/%d"] = "Send %d/%d",
+    ["Pulsa Enviar otra vez para el siguiente mensaje (el juego solo admite uno por clic)."] = "Press Send again for the next message (the game only allows one per click).",
+    ["Enviando... %d / %d"] = "Sending... %d / %d",
+    ["El juego no deja enviar mensajes con temporizador: pulsa Enviar para cada mensaje restante."] = "The game blocks timed messages: press Send for each remaining message.",
+    ["Canal: "] = "Channel: ",
+    ["Abre una profesión y selecciona una receta."] = "Open a profession and select a recipe.",
+    ["No hay ninguna receta seleccionada."] = "No recipe is selected.",
+    ["Escribe el nombre del jugador al que susurrar (pestaña Receta, junto al canal)."] = "Type the name of the player to whisper (Recipe tab, next to the channel).",
+    ["Escribe el número del canal, p. ej. 2 para Comercio (pestaña Receta, junto al canal)."] = "Type the channel number, e.g. 2 for Trade (Recipe tab, next to the channel).",
+    ["Enviado a "] = "Sent to ",
+    ["La plantilla de este canal está vacía (pestaña Canales)."] = "This channel's template is empty (Channels tab).",
+    ["Actualizar precios"] = "Update prices",
+    ["Restaurar"] = "Reset",
+    ["Tarifa de encantador |cffffd100{tarifa}|r:"] = "Enchanter fee |cffffd100{fee}|r:",
+    ["oro"] = "gold",
+    ["plata"] = "silver",
+    ["cobre"] = "copper",
+    ["Receta con precios de subasta"] = "Recipe with auction prices",
+    ["Receta"] = "Recipe",
+    ["Canales"] = "Channels",
+    ["Precios guardados. Abre la casa de subastas para actualizarlos."] = "Saved prices. Open the auction house to update them.",
+    ["Linkear con precios"] = "Link with prices",
+    ["Búsqueda cancelada: se ha cerrado la casa de subastas."] = "Search cancelled: the auction house was closed.",
+}
+
+function ns.T(s)
+    if SPANISH then return s end
+    return EN[s] or s
+end

@@ -2,6 +2,7 @@
 -- Los contactos solo aparecen cuando existe al menos un mensaje, ordenados por el más reciente.
 
 local ADDON = ...
+local T = select(2, ...).T  -- traducción (Locale.lua)
 local MAX_MSGS = 200         -- mensajes guardados por contacto
 local ROW_H, NUM_ROWS = 44, 8 -- tamaño de la lista de contactos
 local LIST_W = 200
@@ -66,7 +67,7 @@ Solid(bg, 0.05, 0.07, 0.08, 0.95)
 
 local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 title:SetPoint("TOPLEFT", 12, -9)
-title:SetText("Susurros")
+title:SetText(T"Susurros")
 
 local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
 close:SetPoint("TOPRIGHT", 2, 2)
@@ -89,7 +90,7 @@ local function MakeTab(text, x, which)
     return t
 end
 local tabChats = MakeTab("Chats", 110, "chats")
-local tabPlayers = MakeTab("Jugadores", 204, "players")
+local tabPlayers = MakeTab(T"Jugadores", 204, "players")
 tabPlayers.sel:Hide()
 
 -- Lista de contactos
@@ -104,7 +105,7 @@ Solid(listBg, 0.09, 0.12, 0.13, 1)
 local emptyList = list:CreateFontString(nil, "OVERLAY", "GameFontDisable")
 emptyList:SetPoint("TOP", 0, -16)
 emptyList:SetWidth(LIST_W - 20)
-emptyList:SetText("Aún no hay conversaciones.\n\nEscribe /ws Nombre para empezar una.")
+emptyList:SetText(T"Aún no hay conversaciones.\n\nEscribe /ws Nombre para empezar una.")
 
 -- Panel de conversación
 local chat = CreateFrame("Frame", nil, f)
@@ -119,7 +120,7 @@ header:SetPoint("TOPLEFT", 8, -6)
 
 local hint = chat:CreateFontString(nil, "OVERLAY", "GameFontDisable")
 hint:SetPoint("CENTER")
-hint:SetText("Elige un contacto de la lista")
+hint:SetText(T"Elige un contacto de la lista")
 
 local input = CreateFrame("EditBox", "SusurrosInput", chat, "InputBoxTemplate")
 input:SetPoint("BOTTOMLEFT", 12, 6)
@@ -168,9 +169,9 @@ badge:SetPoint("BOTTOMRIGHT", 2, -2)
 badge:SetTextColor(0.2, 1, 0.3)
 btn:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:AddLine("Susurros")
-    GameTooltip:AddLine("Clic: abrir/cerrar", 1, 1, 1)
-    GameTooltip:AddLine("Arrastrar: mover", 1, 1, 1)
+    GameTooltip:AddLine(T"Susurros")
+    GameTooltip:AddLine(T"Clic: abrir/cerrar", 1, 1, 1)
+    GameTooltip:AddLine(T"Arrastrar: mover", 1, 1, 1)
     GameTooltip:Show()
 end)
 btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -198,7 +199,7 @@ local function RefreshChat()
     local hex = ClassHex(c and c.class)
     header:SetText(("|c%s%s|r"):format(hex, Short(selected)))
     if not c then
-        log:AddMessage("|cff888888Escribe un mensaje para empezar la conversación.|r")
+        log:AddMessage(T"|cff888888Escribe un mensaje para empezar la conversación.|r")
         return
     end
     local lastDay
@@ -208,7 +209,7 @@ local function RefreshChat()
             log:AddMessage("|cff666666———  " .. day .. "  ———|r")
             lastDay = day
         end
-        local who = m.me and "|cff7fdc7fTú:|r" or ("|c%s%s:|r"):format(hex, Short(selected))
+        local who = m.me and T"|cff7fdc7fTú:|r" or ("|c%s%s:|r"):format(hex, Short(selected))
         log:AddMessage(("|cff888888%s|r %s %s"):format(date("%H:%M", m.t), who, m.text))
     end
     log:ScrollToBottom()
@@ -229,7 +230,7 @@ local function RefreshList()
             local last = c.msgs[#c.msgs]
             row.key = key
             row.name:SetText(("|c%s%s|r"):format(ClassHex(c.class), Short(key)))
-            row.preview:SetText((last.me and "Tú: " or "") .. last.text)
+            row.preview:SetText((last.me and T"Tú: " or "") .. last.text)
             row.time:SetText(ListTime(c.last))
             row.unread:SetText((c.unread or 0) > 0 and c.unread or "")
             row.sel:SetShown(key == selected)
@@ -314,7 +315,7 @@ for i = 1, NUM_ROWS do
     row:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:AddLine(self.key or "")
-        GameTooltip:AddLine("Mayús + clic derecho: borrar conversación", 0.7, 0.7, 0.7)
+        GameTooltip:AddLine(T"Mayús + clic derecho: borrar conversación", 0.7, 0.7, 0.7)
         GameTooltip:Show()
     end)
     row:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -348,7 +349,7 @@ search:SetScript("OnEscapePressed", search.ClearFocus)
 search:SetScript("OnEnterPressed", search.ClearFocus)
 local searchLabel = playersPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 searchLabel:SetPoint("RIGHT", search, "LEFT", -10, 0)
-searchLabel:SetText("Buscar:")
+searchLabel:SetText(T"Buscar:")
 local pCount = playersPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 pCount:SetPoint("TOPRIGHT", -4, -7)
 
@@ -366,7 +367,7 @@ local function RefreshPlayers()
         if sa ~= sb then return sa > sb end
         return a < b
     end)
-    pCount:SetText(("%d de %d jugadores"):format(#pOrder, total))
+    pCount:SetText((T"%d de %d jugadores"):format(#pOrder, total))
 
     local maxOff = math.max(0, math.ceil(#pOrder / COLS) - PROWS)
     pOffset = math.max(0, math.min(pOffset, maxOff))
@@ -384,7 +385,7 @@ local function RefreshPlayers()
             card.name:SetText(Short(key))
             card.name:SetTextColor(r + (1 - r) * 0.25, g + (1 - g) * 0.25, b + (1 - b) * 0.25)
             local className = p.class and LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[p.class]
-            card.info:SetText(("Nivel %s · %s"):format(p.level or "?", className or "Clase desconocida"))
+            card.info:SetText((T"Nivel %s · %s"):format(p.level or "?", className or T"Clase desconocida"))
             card.time:SetText(ListTime(p.seen))
             card:Show()
         else
@@ -444,9 +445,9 @@ for i = 1, COLS * PROWS do
         if not p then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:AddLine(self.key)
-        GameTooltip:AddLine("Visto por última vez: " .. date("%d/%m/%Y %H:%M", p.seen), 1, 1, 1)
-        GameTooltip:AddLine("Clic: susurrar", 0.7, 0.7, 0.7)
-        GameTooltip:AddLine("Mayús + clic derecho: quitar de la lista", 0.7, 0.7, 0.7)
+        GameTooltip:AddLine(T"Visto por última vez: " .. date("%d/%m/%Y %H:%M", p.seen), 1, 1, 1)
+        GameTooltip:AddLine(T"Clic: susurrar", 0.7, 0.7, 0.7)
+        GameTooltip:AddLine(T"Mayús + clic derecho: quitar de la lista", 0.7, 0.7, 0.7)
         GameTooltip:Show()
     end)
     card:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -609,7 +610,7 @@ SlashCmdList.SUSURROS = function(msg)
     msg = strtrim(msg or "")
     if msg == "" then
         Susurros_Toggle()
-    elseif msg:lower() == "boton" or msg:lower() == "botón" then
+    elseif msg:lower() == "boton" or msg:lower() == "botón" or msg:lower() == "button" then
         db.hideBtn = not db.hideBtn
         btn:SetShown(not db.hideBtn)
     else

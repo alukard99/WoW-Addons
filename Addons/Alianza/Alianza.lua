@@ -4,6 +4,7 @@
 -- y escriben con /<número del canal>.
 
 local ADDON_NAME = ...
+local T = select(2, ...).T  -- traducción (Locale.lua)
 local MAX_MSG = 255
 
 local DEFAULTS = {
@@ -22,7 +23,7 @@ local frame = CreateFrame("Frame")
 ---------------------------------------------------------------------------
 
 local function Print(msg)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffff8c1a[Alianza]|r " .. msg)
+    DEFAULT_CHAT_FRAME:AddMessage(T"|cffff8c1a[Alianza]|r " .. msg)
 end
 
 local function IsMyChannel(name)
@@ -123,11 +124,11 @@ end
 local function SendAlliance(text)
     text = text and strtrim(text) or ""
     if text == "" then
-        Print("Escribe un mensaje: |cffffffff/a hola a todos|r")
+        Print(T"Escribe un mensaje: |cffffffff/a hola a todos|r")
         return
     end
     if not db.channel then
-        Print("No hay canal configurado. Usa |cffffffff/alianza canal <nombre> <clave>|r.")
+        Print(T"No hay canal configurado. Usa |cffffffff/alianza canal <nombre> <clave>|r.")
         return
     end
 
@@ -135,13 +136,13 @@ local function SendAlliance(text)
     local id = ChannelId()
     if id == 0 then
         pendingMsg = body
-        Print("Uniéndote al canal... vuelve a pulsar Enter con tu mensaje si no aparece.")
+        Print(T"Uniéndote al canal... vuelve a pulsar Enter con tu mensaje si no aparece.")
         JoinAllianceChannel()
         return
     end
     SendChatMessage(body, "CHANNEL", nil, id)
     if cut then
-        Print("Mensaje demasiado largo, se recortó.")
+        Print(T"Mensaje demasiado largo, se recortó.")
     end
 end
 
@@ -165,22 +166,22 @@ end
 ---------------------------------------------------------------------------
 
 local function ShowHelp()
-    Print("Comandos:")
-    print("  |cffffffff/a <mensaje>|r - escribir en el chat de alianza")
-    print("  |cffffffff/alianza <mensaje>|r - igual que /a")
-    print("  |cffffffff/alianza canal <nombre> [clave]|r - crear/unirte al canal")
-    print("  |cffffffff/alianza info|r - ver la línea /join para pasársela a los demás")
-    print("  |cffffffff/alianza anunciar|r - enviar la línea /join al chat de tu hermandad")
-    print("  |cffffffff/alianza clave <nueva>|r - cambiar la clave (si eres dueño del canal)")
-    print("  |cffffffff/alianza expulsar <jugador>|r - expulsar a alguien del canal")
-    print("  |cffffffff/alianza quien|r - ver quién está en el canal")
-    print("  |cffffffff/alianza etiquetas|r - activar/desactivar <Hermandad> en los mensajes")
-    print("  |cffffffff/alianza salir|r - salir del canal y borrar la configuración")
+    Print(T"Comandos:")
+    print(T"  |cffffffff/a <mensaje>|r - escribir en el chat de alianza")
+    print(T"  |cffffffff/alianza <mensaje>|r - igual que /a")
+    print(T"  |cffffffff/alianza canal <nombre> [clave]|r - crear/unirte al canal")
+    print(T"  |cffffffff/alianza info|r - ver la línea /join para pasársela a los demás")
+    print(T"  |cffffffff/alianza anunciar|r - enviar la línea /join al chat de tu hermandad")
+    print(T"  |cffffffff/alianza clave <nueva>|r - cambiar la clave (si eres dueño del canal)")
+    print(T"  |cffffffff/alianza expulsar <jugador>|r - expulsar a alguien del canal")
+    print(T"  |cffffffff/alianza quien|r - ver quién está en el canal")
+    print(T"  |cffffffff/alianza etiquetas|r - activar/desactivar <Hermandad> en los mensajes")
+    print(T"  |cffffffff/alianza salir|r - salir del canal y borrar la configuración")
 end
 
 local function RequireChannel()
     if not db.channel then
-        Print("Primero configura el canal con |cffffffff/alianza canal <nombre> <clave>|r.")
+        Print(T"Primero configura el canal con |cffffffff/alianza canal <nombre> <clave>|r.")
         return false
     end
     return true
@@ -194,14 +195,14 @@ local function HandleAlianza(input)
     if input == "" or cmd == "ayuda" or cmd == "help" then
         ShowHelp()
 
-    elseif cmd == "canal" then
+    elseif cmd == "canal" or cmd == "channel" then
         local name, password = rest:match("^(%S+)%s*(%S*)$")
         if not name then
-            Print("Uso: |cffffffff/alianza canal <nombre> [clave]|r (el nombre sin espacios)")
+            Print(T"Uso: |cffffffff/alianza canal <nombre> [clave]|r (el nombre sin espacios)")
             return
         end
         if name:match("^%d") then
-            Print("El nombre del canal no puede empezar con un número.")
+            Print(T"El nombre del canal no puede empezar con un número.")
             return
         end
         if db.channel and not IsMyChannel(name) then
@@ -210,63 +211,63 @@ local function HandleAlianza(input)
         db.channel = name
         db.password = password ~= "" and password or nil
         JoinAllianceChannel()
-        Print("Canal configurado. Los demás se unen con: |cffffffff" .. JoinLine() .. "|r")
+        Print(T"Canal configurado. Los demás se unen con: |cffffffff" .. JoinLine() .. "|r")
 
     elseif cmd == "info" then
         if not RequireChannel() then return end
         local id = ChannelId()
-        Print("Canal: |cffffffff" .. db.channel .. "|r - " ..
-            (id ~= 0 and ("|cff00ff00conectado (canal " .. id .. ")|r") or "|cffff0000no conectado|r"))
-        Print("Para unirse: |cffffffff" .. JoinLine() .. "|r")
-        Print("Después escriben con |cffffffff/<número del canal>|r, por ejemplo /5 hola")
+        Print(T"Canal: |cffffffff" .. db.channel .. "|r - " ..
+            (id ~= 0 and (T"|cff00ff00conectado (canal " .. id .. ")|r") or T"|cffff0000no conectado|r"))
+        Print(T"Para unirse: |cffffffff" .. JoinLine() .. "|r")
+        Print(T"Después escriben con |cffffffff/<número del canal>|r, por ejemplo /5 hola")
 
-    elseif cmd == "anunciar" then
+    elseif cmd == "anunciar" or cmd == "announce" then
         if not RequireChannel() then return end
         if not IsInGuild() then
-            Print("No estás en una hermandad.")
+            Print(T"No estás en una hermandad.")
             return
         end
-        SendChatMessage("Chat de alianza: escribe " .. JoinLine() ..
-            " y luego habla con /<número del canal>", "GUILD")
+        SendChatMessage(T"Chat de alianza: escribe " .. JoinLine() ..
+            T" y luego habla con /<número del canal>", "GUILD")
 
-    elseif cmd == "clave" then
+    elseif cmd == "clave" or cmd == "password" then
         if not RequireChannel() then return end
         local newPassword = rest ~= "" and rest or nil
         if SetChannelPassword then
             SetChannelPassword(db.channel, newPassword or "")
         end
         db.password = newPassword
-        Print("Clave cambiada (solo funciona si eres el dueño del canal). Nueva línea: |cffffffff" ..
+        Print(T"Clave cambiada (solo funciona si eres el dueño del canal). Nueva línea: |cffffffff" ..
             JoinLine() .. "|r")
 
-    elseif cmd == "expulsar" then
+    elseif cmd == "expulsar" or cmd == "kick" then
         if not RequireChannel() then return end
         if rest == "" then
-            Print("Uso: |cffffffff/alianza expulsar <jugador>|r")
+            Print(T"Uso: |cffffffff/alianza expulsar <jugador>|r")
             return
         end
         if ChannelKick then
             ChannelKick(db.channel, rest)
         else
-            Print("Usa el comando del juego: |cffffffff/ckick " .. db.channel .. " " .. rest .. "|r")
+            Print(T"Usa el comando del juego: |cffffffff/ckick " .. db.channel .. " " .. rest .. "|r")
         end
 
-    elseif cmd == "quien" or cmd == "quién" then
+    elseif cmd == "quien" or cmd == "quién" or cmd == "who" then
         if not RequireChannel() then return end
         if ListChannelByName then
             ListChannelByName(db.channel)
         else
-            Print("Mira la lista en la ventana Social > pestaña Chat.")
+            Print(T"Mira la lista en la ventana Social > pestaña Chat.")
         end
 
-    elseif cmd == "etiquetas" then
+    elseif cmd == "etiquetas" or cmd == "tags" then
         db.guildTags = not db.guildTags
-        Print("Etiquetas de hermandad " .. (db.guildTags and "activadas." or "desactivadas."))
+        Print(T"Etiquetas de hermandad " .. (db.guildTags and T"activadas." or T"desactivadas."))
 
-    elseif cmd == "salir" then
+    elseif cmd == "salir" or cmd == "leave" then
         LeaveAllianceChannel(db.channel)
         db.channel, db.password = nil, nil
-        Print("Has salido del canal de alianza.")
+        Print(T"Has salido del canal de alianza.")
 
     else
         SendAlliance(input)
@@ -335,7 +336,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
     elseif event == "CHANNEL_UI_UPDATE" then
         -- Si había un mensaje esperando a que entráramos al canal, enviarlo
         if pendingMsg and ChannelId() ~= 0 then
-            Print("Ya estás en el canal. Envía tu mensaje de nuevo con |cffffffff/a|r.")
+            Print(T"Ya estás en el canal. Envía tu mensaje de nuevo con |cffffffff/a|r.")
             pendingMsg = nil
         end
     end

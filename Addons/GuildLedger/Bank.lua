@@ -4,6 +4,7 @@
 -- el banco comparamos el registro con el de la última vez y guardamos lo nuevo.
 local ADDON, ns = ...
 local GL = ns.GL
+local T = ns.T -- traducción (Locale.lua)
 
 local MAX_BANK_LOG = 5000
 local floor = math.floor
@@ -38,10 +39,10 @@ local function HoursAgo(y, mo, d, h)
 end
 
 local function TabLabel(tab)
-    if tab == MoneyTab() then return "Oro" end
+    if tab == MoneyTab() then return T"Oro" end
     local name = GetGuildBankTabInfo and GetGuildBankTabInfo(tab)
     if name and name ~= "" then return name end
-    return "Pestaña " .. tostring(tab)
+    return T"Pestaña " .. tostring(tab)
 end
 
 local function BankDB(g)
@@ -145,7 +146,7 @@ local function Record(g, b, tab, e, touched)
             s.depGold = s.depGold + amt
             table.insert(m.contributions, 1, {
                 t = ts, cat = "Banco: oro", amount = floor(amt / 10000),
-                text = "Depósito en el banco: " .. GL.Money(amt), by = "Banco", auto = true,
+                text = T"Depósito en el banco: " .. GL.Money(amt), by = T"Banco", auto = true,
             })
             touched[m] = true
         elseif e.type == "withdraw" then
@@ -160,7 +161,7 @@ local function Record(g, b, tab, e, touched)
             s.depItems = s.depItems + cnt
             table.insert(m.contributions, 1, {
                 t = ts, cat = "Banco: objetos", amount = nil,
-                text = cnt .. "x " .. ItemName(e.item) .. " (" .. entry.tab .. ")", by = "Banco", auto = true,
+                text = cnt .. "x " .. ItemName(e.item) .. " (" .. entry.tab .. ")", by = T"Banco", auto = true,
             })
             touched[m] = true
         elseif e.type == "withdraw" then
@@ -202,7 +203,7 @@ function GL.ProcessBankLogs(silent)
     end
     if added > 0 then
         b.lastRead = GL.Now()
-        if not silent then GL.Print("Banco: " .. added .. " movimientos nuevos registrados.") end
+        if not silent then GL.Print(T"Banco: " .. added .. T" movimientos nuevos registrados.") end
         if GL.UI and GL.UI.Refresh then GL.UI.Refresh() end
     end
     return added
@@ -219,9 +220,9 @@ end
 -- Texto para mostrar / exportar
 ------------------------------------------------------------------------
 local VERB = {
-    deposit = "deposita", withdraw = "retira", move = "mueve",
-    repair = "retira para reparar", buyTab = "compra pestaña",
-    withdrawForTab = "retira para pestaña", depositSummary = "ingreso de la hermandad",
+    deposit = T"deposita", withdraw = T"retira", move = T"mueve",
+    repair = T"retira para reparar", buyTab = T"compra pestaña",
+    withdrawForTab = T"retira para pestaña", depositSummary = T"ingreso de la hermandad",
 }
 
 function GL.BankLine(e)
@@ -250,16 +251,16 @@ end
 function GL.BankText(filterName)
     local g = GL.GetGuildDB(false)
     if not g or not g.bank or #g.bank.log == 0 then
-        return "Aún no hay movimientos registrados.\n\nAbre el banco de la hermandad para que el addon lea su registro."
+        return T"Aún no hay movimientos registrados.\n\nAbre el banco de la hermandad para que el addon lea su registro."
     end
     local out = {}
     if filterName then
         local m = g.members[filterName]
         local s = m and m.bank
         if s then
-            out[#out + 1] = string.format("Oro: +%s depositado / -%s retirado (%s en reparaciones)",
+            out[#out + 1] = string.format(T"Oro: +%s depositado / -%s retirado (%s en reparaciones)",
                 GL.Money(s.depGold), GL.Money(s.wdGold), GL.Money(s.repairs))
-            out[#out + 1] = string.format("Objetos: +%d depositados / -%d retirados", s.depItems, s.wdItems)
+            out[#out + 1] = string.format(T"Objetos: +%d depositados / -%d retirados", s.depItems, s.wdItems)
             out[#out + 1] = ""
         end
     end
@@ -270,9 +271,9 @@ function GL.BankText(filterName)
             out[#out + 1] = string.format("~%s  %s %s %s", GL.FormatDate(e.t, true), who, verb, what)
         end
     end
-    if #out == 0 then return "Este jugador no tiene movimientos en el banco registrados." end
+    if #out == 0 then return T"Este jugador no tiene movimientos en el banco registrados." end
     out[#out + 1] = ""
-    out[#out + 1] = "(Las horas son aproximadas: el juego solo indica \"hace X horas\".)"
+    out[#out + 1] = T"(Las horas son aproximadas: el juego solo indica \"hace X horas\".)"
     return table.concat(out, "\n")
 end
 
@@ -280,8 +281,8 @@ function GL.BankExportLines(out)
     local g = GL.GetGuildDB(false)
     if not g or not g.bank then return end
     out[#out + 1] = ""
-    out[#out + 1] = "== BANCO =="
-    out[#out + 1] = "Fecha aprox.;Jugador;Acción;Objeto;Cantidad;Oro (cobre);Pestaña"
+    out[#out + 1] = T"== BANCO =="
+    out[#out + 1] = T"Fecha aprox.;Jugador;Acción;Objeto;Cantidad;Oro (cobre);Pestaña"
     for _, e in ipairs(g.bank.log) do
         out[#out + 1] = table.concat({
             GL.FormatDate(e.t, true), tostring(e.name or ""), tostring(e.type or ""),

@@ -1,12 +1,13 @@
 -- Convierte el último escaneo y el historial en texto para pegarlo en una IA.
 local _, S = ...
+local T = S.T -- traducción (Locale.lua)
 
-local CALIDADES = { [0] = "gris", "blanco", "verde", "azul", "morado", "naranja", "artefacto", "reliquia" }
+local CALIDADES = { [0] = T"gris", T"blanco", T"verde", T"azul", T"morado", T"naranja", T"artefacto", T"reliquia" }
 
 S.ORDENES = {
-  { clave = "volumen", nombre = "Volumen" },
-  { clave = "baratos", nombre = "Más baratos" },
-  { clave = "caros", nombre = "Más caros" },
+  { clave = "volumen", nombre = T"Volumen" },
+  { clave = "baratos", nombre = T"Más baratos" },
+  { clave = "caros", nombre = T"Más caros" },
 }
 
 local INSTRUCCIONES = [[
@@ -32,6 +33,31 @@ primeros = los tres precios más bajos con las unidades que hay a cada uno (prec
 Vacío = sin datos.
 ]]
 
+if GetLocale() ~= "esES" and GetLocale() ~= "esMX" then
+  INSTRUCCIONES = [[
+You are an expert analyst of the World of Warcraft: Forever auction house.
+Below is a dump of my realm's auction house. Analyze it and tell me, with item names and numbers:
+1. Flipping: which items I should buy now to resell for more. For each one: how many units to buy,
+   the maximum price to pay, the price to list them at and the expected profit after the cut.
+2. Which items are now below their usual price (comparing the minimum with the history).
+3. Which items are above their usual price (good to sell if I have them).
+4. Items that sell to the NPC vendor for more than they cost on the auction house (buy and vendor them).
+5. Risks: low quantity or few sellers, few days of history, possible price manipulation,
+   slow markets where selling would be hard.
+Keep in mind the auction house takes a 5% cut on sales (15% at the neutral one) and listing something
+costs a deposit that is lost if it doesn't sell. Don't recommend spending more gold than I have.
+
+Data format: one line per item, fields separated by ";". Prices in gold per unit.
+id = item ID | quality | type/subtype | ilvl = item level
+auctions = number of auctions | quantity = units for sale | sellers = different sellers
+min / p25 / median = lowest buyout price, 25th percentile and median (weighted by units)
+hist_p25 = median of the daily p25 of the previous days | hist_days = days with data | hist_qty = average quantity
+npc = vendor sell price | dev_% = how far the current minimum is from hist_p25
+first = the three lowest prices with the units at each one (price x units)
+Empty = no data.
+]]
+end
+
 local function mediana(l)
   if #l == 0 then return nil end
   table.sort(l)
@@ -48,7 +74,7 @@ function S.exportar()
   local r = S.reino()
   local o = SubastasDB.opciones
   if not r.ultimoDia then
-    return nil, "Todavía no hay datos. Abre la casa de subastas y pulsa Escanear."
+    return nil, T"Todavía no hay datos. Abre la casa de subastas y pulsa Escanear."
   end
 
   local filas, faltanNombres = {}, 0
@@ -128,17 +154,17 @@ function S.exportar()
   local u = r.ultimo or {}
   local lineas = {
     INSTRUCCIONES,
-    "### DATOS",
-    string.format("Reino: %s | Escaneo: %s | Subastas leídas: %d | Objetos: %d (se incluyen %d, orden: %s)",
+    T"### DATOS",
+    string.format(T"Reino: %s | Escaneo: %s | Subastas leídas: %d | Objetos: %d (se incluyen %d, orden: %s)",
       S.claveReino(), date("%Y-%m-%d %H:%M", u.t or time()), u.leidas or 0, total, limite, orden),
-    "Mi oro: " .. S.oro(GetMoney()),
-    "id;nombre;calidad;tipo;nv;subastas;cantidad;vendedores;min;p25;mediana;hist_p25;dias_hist;cant_hist;npc;desv_%;primeros",
+    T"Mi oro: " .. S.oro(GetMoney()),
+    T"id;nombre;calidad;tipo;nv;subastas;cantidad;vendedores;min;p25;mediana;hist_p25;dias_hist;cant_hist;npc;desv_%;primeros",
   }
   for i = 1, limite do lineas[#lineas + 1] = filas[i].texto end
 
   local aviso
   if faltanNombres > 0 then
-    aviso = string.format("Faltan datos de %d objetos; el juego los está cargando.", faltanNombres)
+    aviso = string.format(T"Faltan datos de %d objetos; el juego los está cargando.", faltanNombres)
   end
   return table.concat(lineas, "\n"), aviso, limite, total, faltanNombres
 end

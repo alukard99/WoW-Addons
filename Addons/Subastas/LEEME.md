@@ -6,7 +6,7 @@ barato y qué está caro respecto a lo habitual.
 
 ## Instalar
 
-Copia la carpeta `wow\Subastas` en `Interface\AddOns` de WoW Forever (igual que Lados), de modo que
+Copia la carpeta `Subastas` en `Interface\AddOns` de WoW Forever, de modo que
 quede `Interface\AddOns\Subastas\Subastas.toc`. Si sale como «desactualizado», marca «Cargar AddOns desactualizados».
 
 ## Usar

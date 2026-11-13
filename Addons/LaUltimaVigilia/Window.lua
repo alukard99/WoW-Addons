@@ -1,4 +1,5 @@
 local addon, V = ...
+local TR = V.T -- traducción (Locale.lua)
 local W,H = V.width,V.height
 local root,canvas,hud,overlay,render,health,xp,counter,barkLabel
 local screens,selected,cards = {},0,{}
@@ -53,7 +54,7 @@ end
 local function start()
     V.newRun(V.db.sel)
     V.change("play")
-    V.bark("La noche es larga, y tiene hambre.")
+    V.bark(TR"La noche es larga, y tiene hambre.")
 end
 local function pause()
     if V.state=="play" then V.change("pause")
@@ -88,26 +89,26 @@ local function titleScreen(f)
     local cover=f:CreateTexture(nil,"BACKGROUND")
     cover:SetAllPoints();cover:SetTexture(V.media.."Cover.blp")
     rect(f,44,66,48,2,.71,.46,.22)
-    label(f,44,79,470,105,"La Última\nVigilia",46,ivory)
-    label(f,47,200,435,58,"La abadía ha caído. Solo queda tu antorcha, y la noche viene a apagarla. Resiste cinco minutos, hasta el alba.",16,muted)
-    button(f,47,282,242,40,"Encender la antorcha",start,true)
-    local roster=button(f,47,332,242,34,"Vigilantes",chooseRoster)
+    label(f,44,79,470,105,TR"La Última\nVigilia",46,ivory)
+    label(f,47,200,435,58,TR"La abadía ha caído. Solo queda tu antorcha, y la noche viene a apagarla. Resiste cinco minutos, hasta el alba.",16,muted)
+    button(f,47,282,242,40,TR"Encender la antorcha",start,true)
+    local roster=button(f,47,332,242,34,TR"Vigilantes",chooseRoster)
     local best=label(f,47,375,440,28,"",14,gold)
     rect(f,46,416,738,1,.42,.33,.24,.8)
-    label(f,47,426,735,44,"WASD, flechas o arrastrar con el ratón para moverte. Las armas atacan solas.\nRecoge ascuas para subir de nivel. Pulsa P o Esc para pausar.",13,muted)
+    label(f,47,426,735,44,TR"WASD, flechas o arrastrar con el ratón para moverte. Las armas atacan solas.\nRecoge ascuas para subir de nivel. Pulsa P o Esc para pausar.",13,muted)
     local hero=icon(f,521,189,112,138)
     local who=label(f,449,336,324,44,"",18,gold,"CENTER")
     return function()
         V.paint(hero,"hero"..V.db.sel)
         who:SetText((V.character(V.db.sel)))
-        roster.caption:SetText("Vigilantes  ·  "..V.count().." / 100")
-        best:SetText(V.db.g.time>0 and "Mejor vigilia  ·  "..V.clock(V.db.g.time) or "")
+        roster.caption:SetText(TR"Vigilantes  ·  "..V.count().." / 100")
+        best:SetText(V.db.g.time>0 and TR"Mejor vigilia  ·  "..V.clock(V.db.g.time) or "")
     end
 end
 
 local function charsScreen(f)
     rect(f,0,0,W,H,.052,.042,.036,.97)
-    label(f,22,11,360,42,"Los Vigilantes",27)
+    label(f,22,11,360,42,TR"Los Vigilantes",27)
     local tally=label(f,430,14,378,36,"",15,gold,"RIGHT")
     local classes,traits={},{}
     for i,class in ipairs(V.CLS) do
@@ -132,14 +133,14 @@ local function charsScreen(f)
     local who=label(f,299,263,496,33,"",21)
     local detail=label(f,299,299,490,63,"",14,muted)
     local req=label(f,209,370,593,44,"",14,gold)
-    local choose=button(f,208,427,247,38,"Elegir",function()
+    local choose=button(f,208,427,247,38,TR"Elegir",function()
         if V.available(selected) then V.db.sel=selected;menu() end
     end,true)
-    button(f,468,427,143,38,"Volver",menu)
+    button(f,468,427,143,38,TR"Volver",menu)
     return function()
         local name,class,trait=V.character(selected)
         local ci=math.floor(selected/10)
-        tally:SetText(V.count().." de 100 desbloqueados")
+        tally:SetText(V.count()..TR" de 100 desbloqueados")
         for i,b in ipairs(classes) do b.caption:SetTextColor(unpack(i-1==ci and ivory or muted)) end
         for i,b in ipairs(traits) do
             local id=ci*10+i-1
@@ -151,17 +152,17 @@ local function charsScreen(f)
         V.paint(portrait,"hero"..selected);who:SetText(name)
         local weapons=V.UP[class.w].name
         if trait.two then
-            for i,k in ipairs(V.WPN) do if k==class.w then weapons=weapons.." y "..V.UP[V.WPN[i%5+1]].name end end
+            for i,k in ipairs(V.WPN) do if k==class.w then weapons=weapons..TR" y "..V.UP[V.WPN[i%5+1]].name end end
         end
         detail:SetText(weapons.."\n"..class.d.."  "..trait.d)
-        req:SetText(V.available(selected) and (selected==V.db.sel and "Vigilante elegido" or "Disponible") or V.lockText(selected))
-        choose:SetShown(V.available(selected));choose.caption:SetText(selected==V.db.sel and "Continuar con este vigilante" or "Elegir vigilante")
+        req:SetText(V.available(selected) and (selected==V.db.sel and TR"Vigilante elegido" or TR"Disponible") or V.lockText(selected))
+        choose:SetShown(V.available(selected));choose.caption:SetText(selected==V.db.sel and TR"Continuar con este vigilante" or TR"Elegir vigilante")
     end
 end
 
 local function levelScreen(f)
     rect(f,0,0,W,H,.045,.032,.028,.92)
-    label(f,20,32,W-40,56,"Una revelación",31,ivory,"CENTER")
+    label(f,20,32,W-40,56,TR"Una revelación",31,ivory,"CENTER")
     local sub=label(f,25,86,W-50,28,"",15,muted,"CENTER")
     local buttons={}
     for i=1,4 do
@@ -175,8 +176,8 @@ local function levelScreen(f)
         buttons[i]=b
     end
     return function()
-        sub:SetText("Nivel "..V.game.p.lv.."  ·  Elige con qué afrontar la oscuridad.")
-        local kinds={w="Arma",r="Reliquia",a="Habilidad"}
+        sub:SetText(TR"Nivel "..V.game.p.lv..TR"  ·  Elige con qué afrontar la oscuridad.")
+        local kinds={w=TR"Arma",r=TR"Reliquia",a=TR"Habilidad"}
         for i,b in ipairs(buttons) do
             local k=cards[i]
             b:SetShown(k~=nil)
@@ -187,10 +188,10 @@ local function levelScreen(f)
                 b:ClearAllPoints()
                 b:SetPoint("TOPLEFT",f,"TOPLEFT",(W-(#cards*196-12))/2+(i-1)*196,-137)
                 V.paint(b.pic,u and "icon_"..key..(evo and "_e" or "") or "flask")
-                b.name:SetText(u and u.name or "Ración")
+                b.name:SetText(u and u.name or TR"Ración")
                 local n=V.game.p.up[key] or 0
-                b.kind:SetText(evo and "Evolución" or u and (kinds[u.t]..(u.max>1 and " · "..(n+1).." / "..u.max or "")) or "Consumible")
-                b.desc:SetText(u and (n>0 and not evo and u.t=="w" and V.ARCHUP[u.a] or u.ds) or "Recuperas 40 de vida.")
+                b.kind:SetText(evo and TR"Evolución" or u and (kinds[u.t]..(u.max>1 and " · "..(n+1).." / "..u.max or "")) or TR"Consumible")
+                b.desc:SetText(u and (n>0 and not evo and u.t=="w" and V.ARCHUP[u.a] or u.ds) or TR"Recuperas 40 de vida.")
             end
         end
     end
@@ -198,27 +199,27 @@ end
 
 local function pauseScreen(f)
     rect(f,0,0,W,H,.055,.042,.035,.94)
-    label(f,37,25,480,60,"Pausa",32)
+    label(f,37,25,480,60,TR"Pausa",32)
     local items=label(f,39,112,435,266,"",15,muted)
     items:SetJustifyV("TOP")
-    button(f,505,119,269,43,"Continuar",pause,true)
+    button(f,505,119,269,43,TR"Continuar",pause,true)
     local sound=button(f,505,177,269,38,"",function() V.db.muted=not V.db.muted;V.change("pause") end)
     local music=button(f,505,225,269,38,"",function() V.db.musicOff=not V.db.musicOff;V.change("pause") end)
-    button(f,505,294,269,38,"Abandonar la vigilia",function() V.commit(false);menu() end)
+    button(f,505,294,269,38,TR"Abandonar la vigilia",function() V.commit(false);menu() end)
     return function()
         local groups={w={},r={},a={}}
         for k,n in pairs(V.game.p.up) do
             local u=n>5 and V.EV[k] or V.UP[k]
-            groups[u.t][#groups[u.t]+1]=u.name..(n>5 and " (evolución)" or u.max>1 and " "..n or "")
+            groups[u.t][#groups[u.t]+1]=u.name..(n>5 and TR" (evolución)" or u.max>1 and " "..n or "")
         end
         local lines={}
-        for _,pair in ipairs({{"w","Armas"},{"r","Reliquias"},{"a","Habilidades"}}) do
+        for _,pair in ipairs({{"w",TR"Armas"},{"r",TR"Reliquias"},{"a",TR"Habilidades"}}) do
             local list=groups[pair[1]]; table.sort(list)
             if #list>0 then lines[#lines+1]="|cffe1bb72"..pair[2].."|r\n"..table.concat(list,", ") end
         end
         items:SetText(table.concat(lines,"\n\n"))
-        sound.caption:SetText("Sonido  ·  "..(V.db.muted and "desactivado" or "activado"))
-        music.caption:SetText("Música  ·  "..(V.db.musicOff and "desactivada" or "activada"))
+        sound.caption:SetText(TR"Sonido  ·  "..(V.db.muted and TR"desactivado" or TR"activado"))
+        music.caption:SetText(TR"Música  ·  "..(V.db.musicOff and TR"desactivada" or TR"activada"))
     end
 end
 
@@ -228,18 +229,18 @@ local function overScreen(f)
     local sub=label(f,82,110,W-164,58,"",16,muted,"CENTER")
     local stats=label(f,44,187,W-88,56,"",17,gold,"CENTER")
     local unlock=label(f,53,253,W-106,64,"",14,ivory,"CENTER")
-    button(f,131,350,190,41,"Otra vigilia",start,true)
-    button(f,333,350,164,41,"Vigilantes",chooseRoster)
-    button(f,509,350,179,41,"Menú",menu)
-    local endless=button(f,288,410,256,36,"Seguir en la noche",function()
-        V.game.endless=true;V.change("play");V.bark("El alba era mentira. Sigue.")
+    button(f,131,350,190,41,TR"Otra vigilia",start,true)
+    button(f,333,350,164,41,TR"Vigilantes",chooseRoster)
+    button(f,509,350,179,41,TR"Menú",menu)
+    local endless=button(f,288,410,256,36,TR"Seguir en la noche",function()
+        V.game.endless=true;V.change("play");V.bark(TR"El alba era mentira. Sigue.")
     end)
     return function()
         local g=V.game
-        title:SetText(g.victory and "Amanece" or "La llama se extingue")
-        sub:SetText(g.victory and "La luz entra por las vidrieras rotas. Lo que quedaba de la noche arde con ella." or "Otro nombre para las lápidas. La abadía sigue esperando.")
-        stats:SetText(("Tiempo  %s     ·     Abatidos  %d     ·     Nivel  %d\nMejor vigilia  %s"):format(V.clock(g.t),g.kills,g.p.lv,V.clock(V.db.g.time)))
-        unlock:SetText(#g.newCharacters>0 and "Nuevos vigilantes\n"..table.concat(g.newCharacters,", ",1,math.min(4,#g.newCharacters))..(#g.newCharacters>4 and " y "..(#g.newCharacters-4).." más" or "") or "")
+        title:SetText(g.victory and TR"Amanece" or TR"La llama se extingue")
+        sub:SetText(g.victory and TR"La luz entra por las vidrieras rotas. Lo que quedaba de la noche arde con ella." or TR"Otro nombre para las lápidas. La abadía sigue esperando.")
+        stats:SetText((TR"Tiempo  %s     ·     Abatidos  %d     ·     Nivel  %d\nMejor vigilia  %s"):format(V.clock(g.t),g.kills,g.p.lv,V.clock(V.db.g.time)))
+        unlock:SetText(#g.newCharacters>0 and TR"Nuevos vigilantes\n"..table.concat(g.newCharacters,", ",1,math.min(4,#g.newCharacters))..(#g.newCharacters>4 and TR" y "..(#g.newCharacters-4)..TR" más" or "") or "")
         endless:SetShown(g.victory)
     end
 end
@@ -283,11 +284,11 @@ local function build()
     rect(root,0,0,W+4,H+38,.33,.25,.16)
     local bar=place(CreateFrame("Frame",nil,root),root,2,2,W,32)
     rect(bar,0,0,W,32,.10,.078,.065)
-    label(bar,12,0,W-80,32,"La Última Vigilia",15,gold)
+    label(bar,12,0,W-80,32,TR"La Última Vigilia",15,gold)
     bar:EnableMouse(true);bar:RegisterForDrag("LeftButton")
     bar:SetScript("OnDragStart",function() root:StartMoving() end)
     bar:SetScript("OnDragStop",function() root:StopMovingOrSizing() end)
-    button(bar,W-91,1,88,29,"Cerrar",function() root:Hide() end)
+    button(bar,W-91,1,88,29,TR"Cerrar",function() root:Hide() end)
     local clip=place(CreateFrame("Frame",nil,root),root,2,35,W,H)
     clip:SetClipsChildren(true)
     canvas=fullscreen(clip)
@@ -299,7 +300,7 @@ local function build()
     rect(hud,14,9,132,8,.28,.16,.13);health=rect(hud,14,9,132,8,.73,.22,.16,1,"ARTWORK")
     rect(hud,14,21,132,4,.25,.22,.16);xp=rect(hud,14,21,132,4,.86,.66,.29,1,"ARTWORK")
     counter=label(hud,160,0,525,35,"",15,ivory)
-    button(hud,W-82,3,77,28,"Pausa",pause)
+    button(hud,W-82,3,77,28,TR"Pausa",pause)
     barkLabel=label(hud,20,H-51,W-40,42,"",15,gold,"CENTER")
     overlay=fullscreen(clip);overlay:SetFrameLevel(hud:GetFrameLevel()+4);overlay:EnableMouse(true)
     root:EnableKeyboard(true);root:SetPropagateKeyboardInput(false)
@@ -333,7 +334,7 @@ local function build()
         if xp.last~=xpWidth then xp:SetWidth(xpWidth);xp.last=xpWidth end
         local second,hp=math.floor(g.t),math.ceil(g.p.hp)
         if counter.sec~=second or counter.hp~=hp or counter.lv~=g.p.lv or counter.kills~=g.kills or counter.maxHp~=g.p.maxhp or counter.endless~=g.endless then
-            counter:SetText(("%s%s   ·   Nivel %d   ·   %d abatidos   ·   Vida %d/%d"):format(V.clock(second),g.endless and "  ∞" or " / 5:00",g.p.lv,g.kills,hp,g.p.maxhp))
+            counter:SetText((TR"%s%s   ·   Nivel %d   ·   %d abatidos   ·   Vida %d/%d"):format(V.clock(second),g.endless and "  ∞" or " / 5:00",g.p.lv,g.kills,hp,g.p.maxhp))
             counter.sec,counter.hp,counter.lv,counter.kills,counter.maxHp,counter.endless=second,hp,g.p.lv,g.kills,g.p.maxhp,g.endless
         end
         local message=now<expires and notice or ""
@@ -345,7 +346,7 @@ local function build()
 end
 local function toggle()
     if root and root:IsShown() then root:Hide();return end
-    if InCombatLockdown() then print("|cffe1bb72La Última Vigilia|r estará disponible al salir de combate.");return end
+    if InCombatLockdown() then print(TR"|cffe1bb72La Última Vigilia|r estará disponible al salir de combate.");return end
     if not V.db then V.loadSave() end
     if not root then build() end
     root:SetScale(math.min(1,(UIParent:GetWidth()-12)/(W+4),(UIParent:GetHeight()-12)/(H+38)))
@@ -353,6 +354,7 @@ local function toggle()
 end
 SLASH_LAULTIMAVIGILIA1="/vigilia"
 SLASH_LAULTIMAVIGILIA2="/luv"
+SLASH_LAULTIMAVIGILIA3="/vigil"
 SlashCmdList.LAULTIMAVIGILIA=toggle
 local events=CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")

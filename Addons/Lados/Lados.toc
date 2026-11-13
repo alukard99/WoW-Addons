@@ -1,13 +1,18 @@
 ## Interface: 16001, 120105
-## Title: Lados
-## Notes: Juego incremental de figuras que suenan al romperse. Escribe /lados para jugar.
+## Title: Shape Symphony
+## Notes: Incremental game of shapes that play music as they break. Type /lados to play.
+## Notes-esES: Juego incremental de figuras que suenan al romperse. Escribe /lados para jugar.
+## Notes-esMX: Juego incremental de figuras que suenan al romperse. Escribe /lados para jugar.
 ## Author: Alusky
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: LadosDB
 ## IconTexture: Interface\AddOns\Lados\texturas\icono
 ## AddonCompartmentFunc: Lados_Toggle
-## Category: Minijuegos
+## Category: Minigames
+## Category-esES: Minijuegos
+## Category-esMX: Minijuegos
 
+Locale.lua
 Juego.lua
 Sonido.lua
 Dibujo.lua
