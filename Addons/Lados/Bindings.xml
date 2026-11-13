@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="LADOS_TOGGLE" header="LADOS" category="ADDONS">
+    Lados_Toggle()
+  </Binding>
+</Bindings>

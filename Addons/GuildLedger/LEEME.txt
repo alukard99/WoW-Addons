@@ -1,0 +1,54 @@
+GUILD LEDGER - Registro de Hermandad (WoW Forever, interfaz 16001)
+=================================================================
+
+INSTALACIÓN
+1. Cierra el juego.
+2. Copia la carpeta "GuildLedger" entera dentro de la carpeta de addons de WoW Forever:
+     World of Warcraft\<carpeta de Forever>\Interface\AddOns\GuildLedger\
+   (La carpeta de Forever es la que empieza por guion bajo, por ejemplo _classic_beta_ en la beta.
+    Si no existe "Interface\AddOns", créala.)
+3. Abre el juego y activa "Guild Ledger" en el botón AddOns de la pantalla de personajes.
+
+USO
+  /gl              abrir/cerrar la ventana (también desde el botón de addons del minimapa)
+  /gl escanear     volver a leer el roster ahora
+  /gl historial    altas, bajas, cambios de rango y jugadores que llegan al nivel máximo
+  /gl exportar     todos los datos en CSV (separado por ;) para pegar en Excel/Sheets
+  /gl ayuda        lista de comandos
+
+QUÉ RECOPILA (automático cada vez que el juego actualiza la lista de la hermandad)
+  Nombre, clase, nivel, rango, zona, nota pública, nota de oficial (si tienes permiso),
+  última conexión, fecha en que el addon lo vio por primera vez, y cambios de nivel/rango.
+  Los que dejan la hermandad se guardan como "exmiembros" (no se borran sus notas).
+
+DOCUMENTAR APORTES
+  Haz clic en un jugador. En la ficha de la derecha:
+  - "Notas": texto libre (se guarda mientras escribes).
+  - "Añadir aporte": elige categoría (clic izq./der. en el botón), un valor opcional
+    (oro, puntos, cantidad... lo que tu hermandad quiera usar) y una descripción. Enter o "Añadir".
+  - Pasa el ratón por un aporte para ver el detalle y quién lo anotó; la X lo borra.
+  La columna "Aportes" de la lista muestra nº de aportes y (valor total). Clic en las
+  cabeceras para ordenar.
+
+BANCO DE HERMANDAD
+  Cada vez que abres el banco, el addon pide al juego el registro de cada pestaña y
+  del oro, y guarda los movimientos nuevos (sin duplicar los que ya tenía).
+  - Depósitos de oro y objetos: se añaden solos como aportes del jugador
+    (categorías "Banco: oro" con el valor en oro, y "Banco: objetos").
+  - Retiradas y reparaciones: no son aportes, pero cuentan en el resumen de la ficha
+    ("Banco: +depositado / -retirado").
+  - Botón "Banco" (o /gl banco): todos los movimientos. Botón "Ver banco" en la ficha:
+    solo los de ese jugador. También salen en /gl exportar.
+  - El juego solo guarda los últimos movimientos de cada pestaña: abre el banco a menudo
+    (sobre todo si hay mucha actividad) para no perder ninguno.
+  - Solo ves las pestañas cuyo registro te deja ver tu rango.
+  - Las fechas son aproximadas (el juego solo dice "hace X horas").
+
+SHIFT+CLIC
+  Haz clic en una casilla de texto del addon (buscador, notas o descripción del aporte)
+  y luego Shift+clic en un objeto (bolsas, banco, chat, enlaces...): se escribe su nombre.
+
+IMPORTANTE
+  - Los datos se guardan en WTF\Account\<cuenta>\SavedVariables\GuildLedger.lua
+    al cerrar sesión o con /reload. Si el juego se cierra de golpe se pierde lo de esa sesión.
+  - Los datos son locales: solo los ves tú. Para compartirlos usa /gl exportar.

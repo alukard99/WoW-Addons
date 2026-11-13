@@ -1,0 +1,14 @@
+## Interface: 16001
+## AllowLoadGameType: camelot
+## Title: La Última Vigilia
+## Notes: Resiste cinco minutos en la abadía. Abre el minijuego con /vigilia.
+## Version: 1.0.1
+## SavedVariables: LaUltimaVigiliaDB
+
+Catalogue.lua
+Art.lua
+Combat.lua
+Progress.lua
+Render.lua
+Audio.lua
+Window.lua

@@ -1,0 +1,8 @@
+## Interface: 16001, 11509
+## Title: Alianza
+## Notes: Chat común entre varias hermandades con /alianza o /a
+## Author: Alianza
+## Version: 1.0.0
+## SavedVariables: AlianzaDB
+
+Alianza.lua

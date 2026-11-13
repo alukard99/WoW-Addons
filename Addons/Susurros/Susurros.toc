@@ -1,0 +1,9 @@
+## Interface: 16001, 120105
+## Title: Susurros
+## Notes: Mensajes privados estilo WhatsApp: contactos recientes primero y conversaciones separadas. Escribe /ws.
+## Author: Alusky
+## Version: 1.0.0
+## SavedVariablesPerCharacter: SusurrosDB
+## AddonCompartmentFunc: Susurros_Toggle
+
+Susurros.lua

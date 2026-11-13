@@ -1,0 +1,14 @@
+## Interface: 16001, 120105
+## Title: Lados
+## Notes: Juego incremental de figuras que suenan al romperse. Escribe /lados para jugar.
+## Author: Alusky
+## Version: 1.0.0
+## SavedVariables: LadosDB
+## IconTexture: Interface\AddOns\Lados\texturas\icono
+## AddonCompartmentFunc: Lados_Toggle
+## Category: Minijuegos
+
+Juego.lua
+Sonido.lua
+Dibujo.lua
+Interfaz.lua

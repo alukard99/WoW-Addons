@@ -1,0 +1,12 @@
+## Interface: 16001
+## Title: Guild Ledger |cff88ccff(Registro de Hermandad)|r
+## Notes: Recopila los personajes de tu hermandad y te deja documentar lo que aporta cada jugador.
+## Author: Guild Ledger
+## Version: 1.0.0
+## SavedVariables: GuildLedgerDB
+## IconTexture: Interface\Icons\INV_Misc_Book_09
+## AddonCompartmentFunc: GuildLedger_OnCompartmentClick
+
+Core.lua
+Bank.lua
+UI.lua

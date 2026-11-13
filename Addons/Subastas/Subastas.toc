@@ -1,0 +1,13 @@
+## Interface: 16001, 120105
+## Title: Subastas
+## Notes: Escanea la casa de subastas y exporta los precios en texto para que una IA los analice. Escribe /subastas.
+## Author: Alusky
+## Version: 1.0.0
+## SavedVariables: SubastasDB
+## AddonCompartmentFunc: Subastas_Toggle
+## Category: Subastas
+
+Nucleo.lua
+Escaneo.lua
+Exportar.lua
+Interfaz.lua
