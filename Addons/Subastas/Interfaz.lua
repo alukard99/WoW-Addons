@@ -200,6 +200,8 @@ SlashCmdList.SUBASTAS = function(arg)
   elseif arg:match("^dias %d+$") or arg:match("^days %d+$") then
     SubastasDB.opciones.dias = tonumber(arg:match("%d+"))
     S.msg(T"Se guardarán " .. SubastasDB.opciones.dias .. T" días de historial.")
+  elseif arg == "boton" or arg == "botón" or arg == "button" then
+    S.AlternarBoton()
   elseif arg == "borrar" or arg == "clear" then
     SubastasDB.reinos[S.claveReino()] = nil
     S.msg(T"Datos de " .. S.claveReino() .. T" borrados.")

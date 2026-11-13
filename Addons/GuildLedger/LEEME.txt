@@ -15,6 +15,8 @@ USO
   /gl historial    altas, bajas, cambios de rango y jugadores que llegan al nivel máximo
   /gl exportar     todos los datos en CSV (separado por ;) para pegar en Excel/Sheets
   /gl ayuda        lista de comandos
+  /gl boton        mostrar u ocultar el botón flotante (clic: abrir/cerrar; clic derecho:
+                   historial; arrástralo para moverlo)
 
 QUÉ RECOPILA (automático cada vez que el juego actualiza la lista de la hermandad)
   Nombre, clase, nivel, rango, zona, nota pública, nota de oficial (si tienes permiso),

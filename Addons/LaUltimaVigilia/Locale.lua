@@ -394,6 +394,13 @@ local EN = {
     ["%s%s   ·   Nivel %d   ·   %d abatidos   ·   Vida %d/%d"] = "%s%s   ·   Level %d   ·   %d slain   ·   Health %d/%d",
     ["|cffe1bb72La Última Vigilia|r estará disponible al salir de combate."] = "|cffe1bb72The Last Vigil|r will be available after you leave combat.",
     [" y "] = " and ",
+
+    -- Boton.lua
+    ["Clic: abrir o cerrar"] = "Click: open or close",
+    ["Arrastrar: mover"] = "Drag: move",
+    ["Botón oculto. Escribe %s para volver a mostrarlo."] = "Button hidden. Type %s to show it again.",
+    ["Botón visible."] = "Button shown.",
+    ["/vigilia boton"] = "/vigil button",
 }
 
 function ns.T(s)

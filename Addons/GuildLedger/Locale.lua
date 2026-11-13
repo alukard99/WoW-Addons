@@ -107,6 +107,16 @@ local EN = {
     ["Banco: |cff33ff33+%s|r / |cffff6666-%s|r  ·  objetos |cff33ff33+%d|r / |cffff6666-%d|r"] = "Bank: |cff33ff33+%s|r / |cffff6666-%s|r  ·  items |cff33ff33+%d|r / |cffff6666-%d|r",
     ["|cff888888Último cambio: "] = "|cff888888Last change: ",
     ["Aportes registrados: %d  ·  Valor total: %d"] = "Recorded contributions: %d  ·  Total value: %d",
+
+    -- Boton.lua
+    ["Clic: abrir o cerrar"] = "Click: open or close",
+    ["Arrastrar: mover"] = "Drag: move",
+    ["Botón oculto. Escribe %s para volver a mostrarlo."] = "Button hidden. Type %s to show it again.",
+    ["Botón visible."] = "Button shown.",
+    ["Registro de la hermandad"] = "Guild Contribution Ledger",
+    ["/gl boton"] = "/gl button",
+    ["Clic derecho: historial"] = "Right click: history",
+    ["/gl boton - mostrar u ocultar el botón flotante"] = "/gl button - show or hide the floating button",
 }
 
 function ns.T(s)

@@ -16,6 +16,8 @@ USE
   /gl export       all data as CSV (separated by ;) to paste into Excel/Sheets
   /gl bank         recorded guild bank transactions
   /gl help         command list
+  /gl button       show or hide the floating button (click: open/close; right click:
+                   history; drag it to move it)
 
 WHAT IT COLLECTS (automatically whenever the game updates the guild list)
   Name, class, level, rank, zone, public note, officer note (if you can see it),

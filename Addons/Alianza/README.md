@@ -41,6 +41,7 @@ kick people. Then send the join line to the leaders of the other guilds:
 | `/alianza who` | See who is in the channel |
 | `/alianza tags` | Show or hide `<Guild>` in front of messages |
 | `/alianza leave` | Leave the channel and clear the settings |
+| `/alianza button` | Show or hide the floating button (click: write in the channel; right click: the `/join` line; drag it to move it) |
 
 The Spanish commands (`canal`, `anunciar`, `clave`, `expulsar`, `quien`, `etiquetas`, `salir`) also work.
 
@@ -100,6 +101,7 @@ expulsar gente. Después pasa la línea de unión a los líderes de las otras he
 | `/alianza quien` | Ver quién está en el canal |
 | `/alianza etiquetas` | Mostrar u ocultar `<Hermandad>` delante de los mensajes |
 | `/alianza salir` | Salir del canal y borrar la configuración |
+| `/alianza boton` | Mostrar u ocultar el botón flotante (clic: escribir en el canal; clic derecho: la línea `/join`; arrástralo para moverlo) |
 
 El addon te une al canal al conectarte, espera unos segundos para no cambiar el
 número de General y Comercio, y lo muestra en tu ventana de chat.

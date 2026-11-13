@@ -4,7 +4,7 @@
 ## Notes-esES: Linkea al chat la receta seleccionada con sus materiales, la cantidad y el precio de cada uno en la casa de subastas. Escribe /receta.
 ## Notes-esMX: Linkea al chat la receta seleccionada con sus materiales, la cantidad y el precio de cada uno en la casa de subastas. Escribe /receta.
 ## Author: Alusky
-## Version: 1.1.0
+## Version: 1.2.0
 ## SavedVariables: RecetaSubastaDB
 ## OptionalDeps: Auctionator
 ## Category: Auction House
@@ -13,3 +13,4 @@
 
 Locale.lua
 RecetaSubasta.lua
+Boton.lua

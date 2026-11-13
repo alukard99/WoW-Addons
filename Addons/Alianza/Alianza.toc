@@ -4,8 +4,9 @@
 ## Notes-esES: Chat común entre varias hermandades con /alianza o /a
 ## Notes-esMX: Chat común entre varias hermandades con /alianza o /a
 ## Author: Alianza
-## Version: 1.1.0
+## Version: 1.2.0
 ## SavedVariables: AlianzaDB
 
 Locale.lua
 Alianza.lua
+Boton.lua

@@ -254,6 +254,13 @@ local EN = {
     ["|cff6c9bffLados|r: escribe /lados escala 50 (de "] = "|cff6c9bffShape Symphony|r: type /lados scale 50 (from ",
     [" a "] = " to ",
     ["|cff6c9bffLados|r: ventana cerrada al entrar en combate. Escribe /lados para volver."] = "|cff6c9bffShape Symphony|r: window closed when entering combat. Type /lados to come back.",
+
+    -- Boton.lua
+    ["Clic: abrir o cerrar"] = "Click: open or close",
+    ["Arrastrar: mover"] = "Drag: move",
+    ["Botón oculto. Escribe %s para volver a mostrarlo."] = "Button hidden. Type %s to show it again.",
+    ["Botón visible."] = "Button shown.",
+    ["/lados boton"] = "/lados button",
 }
 
 function ns.T(s)

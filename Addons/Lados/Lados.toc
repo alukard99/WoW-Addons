@@ -4,7 +4,7 @@
 ## Notes-esES: Juego incremental de figuras que suenan al romperse. Escribe /lados para jugar.
 ## Notes-esMX: Juego incremental de figuras que suenan al romperse. Escribe /lados para jugar.
 ## Author: Alusky
-## Version: 1.1.0
+## Version: 1.2.0
 ## SavedVariables: LadosDB
 ## IconTexture: Interface\AddOns\Lados\texturas\icono
 ## AddonCompartmentFunc: Lados_Toggle
@@ -17,3 +17,4 @@ Juego.lua
 Sonido.lua
 Dibujo.lua
 Interfaz.lua
+Boton.lua

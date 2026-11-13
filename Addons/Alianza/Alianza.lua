@@ -4,7 +4,8 @@
 -- y escriben con /<número del canal>.
 
 local ADDON_NAME = ...
-local T = select(2, ...).T  -- traducción (Locale.lua)
+local ns = select(2, ...)
+local T = ns.T  -- traducción (Locale.lua)
 local MAX_MSG = 255
 
 local DEFAULTS = {
@@ -177,6 +178,7 @@ local function ShowHelp()
     print(T"  |cffffffff/alianza quien|r - ver quién está en el canal")
     print(T"  |cffffffff/alianza etiquetas|r - activar/desactivar <Hermandad> en los mensajes")
     print(T"  |cffffffff/alianza salir|r - salir del canal y borrar la configuración")
+    print(T"  |cffffffff/alianza boton|r - mostrar u ocultar el botón flotante")
 end
 
 local function RequireChannel()
@@ -263,6 +265,9 @@ local function HandleAlianza(input)
     elseif cmd == "etiquetas" or cmd == "tags" then
         db.guildTags = not db.guildTags
         Print(T"Etiquetas de hermandad " .. (db.guildTags and T"activadas." or T"desactivadas."))
+
+    elseif cmd == "boton" or cmd == "botón" or cmd == "button" then
+        ns.AlternarBoton()
 
     elseif cmd == "salir" or cmd == "leave" then
         LeaveAllianceChannel(db.channel)

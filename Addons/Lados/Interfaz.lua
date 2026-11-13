@@ -1021,6 +1021,9 @@ SlashCmdList.LADOS = function(msg)
   elseif msg == "mini" then
     setShop(false); setScale(0.7); anchorTopLeft(); F:SetSize(minSize()); savePos(); F:Show()
     return
+  elseif msg == "boton" or msg == "botón" or msg == "button" then
+    L.AlternarBoton()
+    return
   elseif msg == "tienda" or msg == "shop" then
     setShop(not shopShown); F:Show()
     return

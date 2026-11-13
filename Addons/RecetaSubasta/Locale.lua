@@ -57,6 +57,13 @@ local EN = {
     ["Precios guardados. Abre la casa de subastas para actualizarlos."] = "Saved prices. Open the auction house to update them.",
     ["Linkear con precios"] = "Link with prices",
     ["Búsqueda cancelada: se ha cerrado la casa de subastas."] = "Search cancelled: the auction house was closed.",
+
+    -- Boton.lua
+    ["Clic: abrir o cerrar"] = "Click: open or close",
+    ["Arrastrar: mover"] = "Drag: move",
+    ["Botón oculto. Escribe %s para volver a mostrarlo."] = "Button hidden. Type %s to show it again.",
+    ["Botón visible."] = "Button shown.",
+    ["/receta boton"] = "/receta button",
 }
 
 function ns.T(s)

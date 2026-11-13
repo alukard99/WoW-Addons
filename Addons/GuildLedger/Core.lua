@@ -318,12 +318,15 @@ SlashCmdList["GUILDLEDGER"] = function(msg)
     elseif msg == "banco" or msg == "bank" then
         GL.ProcessBankLogs()
         GL.UI.ShowText(T"Movimientos del banco", GL.BankText())
+    elseif msg == "boton" or msg == "botón" or msg == "button" then
+        ns.AlternarBoton()
     elseif msg == "help" or msg == "ayuda" then
         GL.Print(T"/gl banco - ver los movimientos del banco registrados")
         GL.Print(T"/gl - abrir/cerrar ventana")
         GL.Print(T"/gl escanear - releer el roster ahora")
         GL.Print(T"/gl exportar - copiar todos los datos como CSV")
         GL.Print(T"/gl historial - ver altas, bajas y cambios de rango")
+        GL.Print(T"/gl boton - mostrar u ocultar el botón flotante")
     else
         GL.UI.Toggle()
     end

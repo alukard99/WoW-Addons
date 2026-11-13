@@ -29,6 +29,7 @@ Lo ideal es escanear una vez al día durante una semana antes de fiarte de las c
   si la IA dice que el texto es demasiado largo, baja este número.
 - `/subastas dias 30` cambia cuántos días de historial se guardan (14 por defecto).
 - `/subastas borrar` borra los datos del reino y facción actuales.
+- Botón flotante: clic abre o cierra la ventana, clic derecho escanea (con la casa de subastas abierta), arrástralo para moverlo. `/subastas boton` lo muestra u oculta.
 
 ## Datos que se exportan
 

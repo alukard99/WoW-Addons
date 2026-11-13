@@ -1,0 +1,20 @@
+## Interface: 16001
+## Title: Guild Crafting Market
+## Notes: Guild crafting market: publish what you can craft, free for your guild or for a price, and see every recipe with its materials. Type /artesanos.
+## Notes-esES: Mercado de fabricación de la hermandad: publica lo que sabes fabricar, gratis para tu hermandad o con precio, y mira cada receta con sus materiales. Escribe /artesanos.
+## Notes-esMX: Mercado de fabricación de la hermandad: publica lo que sabes fabricar, gratis para tu hermandad o con precio, y mira cada receta con sus materiales. Escribe /artesanos.
+## Author: Alusky
+## Version: 1.0.0
+## SavedVariables: ArtesanosDB
+## IconTexture: Interface\Icons\Trade_BlackSmithing
+## AddonCompartmentFunc: Artesanos_OnCompartmentClick
+## Category: Professions
+## Category-esES: Profesiones
+## Category-esMX: Profesiones
+
+Locale.lua
+Core.lua
+Comm.lua
+Profession.lua
+UI.lua
+Button.lua

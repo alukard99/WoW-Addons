@@ -355,7 +355,10 @@ end
 SLASH_LAULTIMAVIGILIA1="/vigilia"
 SLASH_LAULTIMAVIGILIA2="/luv"
 SLASH_LAULTIMAVIGILIA3="/vigil"
-SlashCmdList.LAULTIMAVIGILIA=toggle
+SlashCmdList.LAULTIMAVIGILIA=function(msg)
+    msg=strlower(strtrim(msg or ""))
+    if msg=="boton" or msg=="botón" or msg=="button" then V.AlternarBoton() else toggle() end
+end
 local events=CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
 events:RegisterEvent("PLAYER_REGEN_DISABLED")

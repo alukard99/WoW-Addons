@@ -41,6 +41,21 @@ local EN = {
     ["desactivadas."] = "off.",
     ["Has salido del canal de alianza."] = "You left the alliance channel.",
     ["Ya estás en el canal. Envía tu mensaje de nuevo con |cffffffff/a|r."] = "You are in the channel now. Send your message again with |cffffffff/a|r.",
+
+    -- Boton.lua
+    ["Clic: abrir o cerrar"] = "Click: open or close",
+    ["Arrastrar: mover"] = "Drag: move",
+    ["Botón oculto. Escribe %s para volver a mostrarlo."] = "Button hidden. Type %s to show it again.",
+    ["Botón visible."] = "Button shown.",
+    ["Chat de alianza"] = "Guild Alliance Chat",
+    ["/alianza boton"] = "/alianza button",
+    ["Clic: escribir en el chat de alianza"] = "Click: write in the alliance chat",
+    ["Clic derecho: ver el canal y la línea para unirse"] = "Right click: show the channel and the line to join it",
+    ["Sin canal configurado"] = "No channel set up",
+    ["Canal: %s"] = "Channel: %s",
+    ["|cff33ff33conectado|r"] = "|cff33ff33connected|r",
+    ["|cffff3333no conectado|r"] = "|cffff3333not connected|r",
+    ["  |cffffffff/alianza boton|r - mostrar u ocultar el botón flotante"] = "  |cffffffff/alianza button|r - show or hide the floating button",
 }
 
 function ns.T(s)

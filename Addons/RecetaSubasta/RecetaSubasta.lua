@@ -7,7 +7,8 @@
 -- El texto que se envía sale de una plantilla por canal (pestaña Canales): cada línea de la
 -- plantilla es un mensaje de chat y los {marcadores} se sustituyen por los datos de la receta.
 local NOMBRE = ...
-local T = select(2, ...).T -- traducción (Locale.lua)
+local ns = select(2, ...)
+local T = ns.T -- traducción (Locale.lua)
 
 local GetItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
 local EnviarChat = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
@@ -760,8 +761,13 @@ end)
 
 SLASH_RECETASUBASTA1 = "/receta"
 SLASH_RECETASUBASTA2 = "/recetasubasta"
-SlashCmdList.RECETASUBASTA = function()
+SlashCmdList.RECETASUBASTA = function(arg)
   if not db then return end
+  arg = strlower(strtrim(arg or ""))
+  if arg == "boton" or arg == "botón" or arg == "button" then
+    ns.AlternarBoton()
+    return
+  end
   if not recetaID and not recetaSeleccionada() then
     msg(T"Abre una profesión y selecciona una receta.")
   end

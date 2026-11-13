@@ -56,6 +56,14 @@ local EN = {
     ["Datos de "] = "Data for ",
     [" borrados."] = " deleted.",
     ["|cff33ccffSubastas:|r "] = "|cff33ccffAH Price Export:|r ",
+
+    -- Boton.lua
+    ["Clic: abrir o cerrar"] = "Click: open or close",
+    ["Arrastrar: mover"] = "Drag: move",
+    ["Botón oculto. Escribe %s para volver a mostrarlo."] = "Button hidden. Type %s to show it again.",
+    ["Botón visible."] = "Button shown.",
+    ["/subastas boton"] = "/subastas button",
+    ["Clic derecho: escanear la casa de subastas"] = "Right click: scan the auction house",
 }
 
 function ns.T(s)

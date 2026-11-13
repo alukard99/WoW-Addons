@@ -31,6 +31,7 @@ Ideally scan once a day for a week before trusting the comparisons.
   items; if the AI says the text is too long, lower this number.
 - `/subastas days 30` changes how many days of history are kept (14 by default).
 - `/subastas clear` deletes the data of the current realm and faction.
+- Floating button: click opens or closes the window, right click scans (with the auction house open), drag it to move it. `/subastas button` shows or hides it.
 
 The history is saved in `WTF\Account\<account>\SavedVariables\Subastas.lua`.
 

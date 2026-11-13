@@ -4,7 +4,7 @@
 ## Notes: Survive five minutes in the abbey. Open the minigame with /vigil.
 ## Notes-esES: Resiste cinco minutos en la abadía. Abre el minijuego con /vigilia.
 ## Notes-esMX: Resiste cinco minutos en la abadía. Abre el minijuego con /vigilia.
-## Version: 1.1.0
+## Version: 1.2.0
 ## SavedVariables: LaUltimaVigiliaDB
 
 Locale.lua
@@ -15,3 +15,4 @@ Progress.lua
 Render.lua
 Audio.lua
 Window.lua
+Boton.lua

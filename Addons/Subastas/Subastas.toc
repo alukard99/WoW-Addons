@@ -4,7 +4,7 @@
 ## Notes-esES: Escanea la casa de subastas y exporta los precios en texto para que una IA los analice. Escribe /subastas.
 ## Notes-esMX: Escanea la casa de subastas y exporta los precios en texto para que una IA los analice. Escribe /subastas.
 ## Author: Alusky
-## Version: 1.1.0
+## Version: 1.2.0
 ## SavedVariables: SubastasDB
 ## AddonCompartmentFunc: Subastas_Toggle
 ## Category: Auction House
@@ -16,3 +16,4 @@ Nucleo.lua
 Escaneo.lua
 Exportar.lua
 Interfaz.lua
+Boton.lua
